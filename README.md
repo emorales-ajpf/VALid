@@ -103,7 +103,7 @@ A continuació es descriuen les diferents parts implicades en el procés d'auten
 - _Aplicació client_: és la aplicació que es recolza en VALId per a autenticar els seus usuaris. D'aquesta manera s'estalvia mantenir una base de dades d'usuaris o actualitzar els mecanismes d'autenticació.
 - _Usuari_
 
-![1](captures/1.png)
+![1](Captures/1.png)
 
 La seqüència d'autorització s'inicia quan l'aplicació web que s'integra realitza una redirecció cap a la URL del punt d'autenticació del VALId. Aquesta URL inclou una sèrie de paràmetres que indiquen el tipus d'accés que es vol sol·licitar. VALId realitza l'autenticació de l'usuari així com la seva sessió OAuth amb el navegador. El resultat d'aquest procés és un codi d'autorització, que és retornat per VALId cap a la aplicació web a mode de paràmetre dins d'una URL.
 
