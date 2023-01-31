@@ -30,29 +30,29 @@ Realitzat per: Àrea de Tecnologia - Projectes
 
 **Índex**
 
-[1 Introducció 1](#1)
-[1.1 Registre de l'aplicació client 1](#1.1)
-[1.2 Entorns 2](#2)
-[2 Integració de l'aplicació client 2](#2)
-[2.1 Construcció de la URL 4](#2.1)
-[2.2 Tractament de la resposta 5](#2.2)
-[2.2.1 Generació d'un nou accés token a partir del refresh Token. 7](#2.2.1)
-[2.3 Revocació d'un token d'accés 7](#2.3)
-[2.4 Logout programàtic 8](#2.4)
-[3 Serveis de dades de suport a les aplicacions 8](#3)
-[3.1 Dades de l'usuari validat 8](#3.1)
-[3.2 Evidències d'autenticació 10](#3.2)
-[4 Operacions de signatura ordinària 11](#4)
-[4.1 Signatura ordinària a partir de l'accés token 11](#4.1)
-[4.2 Signatura ordinària a partir de l'accés token i acció d'autenticació addicional 12](#4.2)
-[4.3 Consideracions sobre el resum criptogràfic 16](#4.3)
-[4.4 Missatge de signatura ordinària 16](#4.4)
-[Annex - evidències del procés de validació 19](#Annex)
-[Evidències generades en la consulta a la Base de Dades de la Seu 19](#Evidències1)
-[Evidències generades en la validació amb certificat digital 20](#Evidències2)
-[Evidències generades en la validació amb contrasenya al mòbil (SMS) 21](#Evidències3)
-[Evidències generades en la validació amb MobileID 23](#Evidències4)
-[Evidències generades en la validació amb Cl@ve 24](#Evidències5)
+- [1 Introducció 1](#1)
+    * [1.1 Registre de l'aplicació client](#1.1)
+    * [1.2 Entorns ](#2)
+- [2 Integració de l'aplicació client](#2)
+    * [2.1 Construcció de la URL](#2.1)
+    * [2.2 Tractament de la resposta](#2.2)
+        * [2.2.1 Generació d'un nou accés token a partir del refresh Token.](#2.2.1)
+    * [2.3 Revocació d'un token d'accés](#2.3)
+    * [2.4 Logout programàtic ](#2.4)
+- [3 Serveis de dades de suport a les aplicacions](#3)
+    * [3.1 Dades de l'usuari validat ](#3.1)
+    * [3.2 Evidències d'autenticació ](#3.2)
+- [4 Operacions de signatura ordinària ](#4)
+    * [4.1 Signatura ordinària a partir de l'accés token ](#4.1)
+    * [4.2 Signatura ordinària a partir de l'accés token i acció d'autenticació addicional ](#4.2)
+    * [4.3 Consideracions sobre el resum criptogràfic](#4.3)
+    * [4.4 Missatge de signatura ordinària](#4.4)
+- [Annex - evidències del procés de validació ](#Annex)
+    * [Evidències generades en la consulta a la Base de Dades de la Seu ](#Evidències1)
+    * [Evidències generades en la validació amb certificat digital](#Evidències2)
+    * [Evidències generades en la validació amb contrasenya al mòbil (SMS)](#Evidències3)
+    * [Evidències generades en la validació amb MobileID](#Evidències4)
+    * [Evidències generades en la validació amb Cl@ve](#Evidències5)
 
 # 1 Introducció <a name="1"></a>
 
@@ -68,7 +68,7 @@ Per tal de registrar una aplicació client cal posar-se en contacte amb el Conso
 | --- | --- |
 | Nom curt | Nom curt de la aplicació client que es vol integrar amb VALId (p.e. "eNOTUM"). |
 | Descripció | Descripció de la aplicació client (p.e. "Servei de notificacions electròniques del Consorci AOC"). |
-| Redirect URI | URL a la qual VALId haurà d'enviar el resultat de la autenticació (p.e. https://enotum.aoc.cat/code).Es pot passar una llista amb més d'una URL de redirecció, tot i que no és el cas més habitual. |
+| Redirect URI | URL a la qual VALId haurà d'enviar el resultat de la autenticació (p.e. https://enotum.aoc.cat/code).  Es pot passar una llista amb més d'una URL de redirecció, tot i que no és el cas més habitual. |
 | Mètodes d'autenticació | Mètodes de validació que es vol emprar per a les autenticacions a la aplicació web client.Actualment es suporten els següents mecanismes:<br>- idCAT Mòbil (contrasenya SMS al mòbil).<br>- Certificat digital.<br>- [Cl@ve](#cl@ve)  del Ministerio de Hacienda y Administraciones Públicas.<br>- [idCAT MobileConnect](#idCATMobileConnect) de GSMA.<br>- [MobileID](#MobileID) de l'Ajuntament de Barcelona. |
 | Mètodes de signatura ordinària | Mètodes de validació que es vol emprar per a les signatures ordinàries que requereixen una autenticació addicional per part de l'usuari.Actualment es suporten els següents mecanismes:<br>- Contrasenya SMS al mòbil.<br>- Certificat digital. |
 | Recursos de personalització | CSSs i logos amb el que es presentaran les pantalles de validació d'identitats. |
