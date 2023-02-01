@@ -497,8 +497,7 @@ La signatura ordinària està formada per una signatura XAdES-T que embolcalla (
 
 ---
 
-<a name="11"></a> El sistema de traces certificades té la particularitat que els seus registres van enllaçats amb una signatura HMAC: cada registre comença amb el hash SHA-256 del registre anterior xifrat amb una clau privada simètrica que només coneix el sistema. D'aquesta manera és impossible afegir o esborrar una traça a posteriori sense trencar la integritat interna del fitxer de traces, és a dir, es pot detectar en quina línia del fitxer de log s'ha realitzat una alteració.
-Addicionalment, cada nit s'executa un procés de consolidació que afegeix un segell de temps a tot el fitxer de traces de forma que assegurem la integritat de tot el fitxer i permet determinar amb fiabilitat la data de creació del mateix i si s’ha modificat o no des d’aleshores.
+<a name="11"></a> El sistema de traces certificades té la particularitat que els seus registres van enllaçats amb una signatura HMAC: cada registre comença amb el hash SHA-256 del registre anterior xifrat amb una clau privada simètrica que només coneix el sistema. D'aquesta manera és impossible afegir o esborrar una traça a posteriori sense trencar la integritat interna del fitxer de traces, és a dir, es pot detectar en quina línia del fitxer de log s'ha realitzat una alteració.<br>Addicionalment, cada nit s'executa un procés de consolidació que afegeix un segell de temps a tot el fitxer de traces de forma que assegurem la integritat de tot el fitxer i permet determinar amb fiabilitat la data de creació del mateix i si s’ha modificat o no des d’aleshores.
 
 
 ![4](Captures/4.png)
