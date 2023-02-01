@@ -47,12 +47,12 @@ Realitzat per: Àrea de Tecnologia - Projectes
     * [4.2 Signatura ordinària a partir de l'accés token i acció d'autenticació addicional ](#4.2)
     * [4.3 Consideracions sobre el resum criptogràfic](#4.3)
     * [4.4 Missatge de signatura ordinària](#4.4)
-- [Annex - evidències del procés de validació ](#Annex)
-    * [Evidències generades en la consulta a la Base de Dades de la Seu ](#Evidències1)
-    * [Evidències generades en la validació amb certificat digital](#Evidències2)
-    * [Evidències generades en la validació amb contrasenya al mòbil (SMS)](#Evidències3)
-    * [Evidències generades en la validació amb MobileID](#Evidències4)
-    * [Evidències generades en la validació amb Cl@ve](#Evidències5)
+- [Annex - evidències del procés de validació ](#5)
+    * [Evidències generades en la consulta a la Base de Dades de la Seu ](#6)
+    * [Evidències generades en la validació amb certificat digital](#7)
+    * [Evidències generades en la validació amb contrasenya al mòbil (SMS)](#8)
+    * [Evidències generades en la validació amb MobileID](#9)
+    * [Evidències generades en la validació amb Cl@ve](#10)
 
 # 1 Introducció <a name="1"></a>
 
@@ -123,14 +123,14 @@ Aquesta URL és accessible únicament per protocol segur _https_i tots els proce
 
 | _Paràmetre_ | _Descripció_ |
 | --- | --- |
-| response\_type | Tipus de resposta a retornar. Actualment només es suporta el valor code que indica que el servidor retornarà a la aplicació un codi d'autorització (a_uthorization\_code_) per a poder negociar el token d'accés. |
-| client\_id | Identificador de la aplicació web que esta realitzant la operació d'autenticació. Aquest identificador és assignat pel Consorci AOC en el moment de fer el registre de l'aplicació al VALId. Aquests identificadors tenen un aspecte similar al que es mostra a continuació: <br><br>_0123456789.serveis.aoc.cat_ </br> |
-| redirect\_uri | URL a la que VALId haurà de retornar el resultat del procés d'autenticació.<br><br> El resultat de la operació pot ser el codi d'autorització per tal que la aplicació web pugui negociar l'_access token_ definitiu o bé un codi d'error en cas de que la validació no s'hagi pogut realitzar amb èxit.<br><br> Aquesta URL s'haurà de proporcionar en el moment del registre de l'aplicació.<br><br>Una aplicació pot tenir més d'una URI de redirecció, però totes han de constar al registre de l'aplicació del VALId. |
+| response_type | Tipus de resposta a retornar. Actualment només es suporta el valor code que indica que el servidor retornarà a la aplicació un codi d'autorització (a_uthorization_code_) per a poder negociar el token d'accés. |
+| client_id | Identificador de la aplicació web que esta realitzant la operació d'autenticació. Aquest identificador és assignat pel Consorci AOC en el moment de fer el registre de l'aplicació al VALId. Aquests identificadors tenen un aspecte similar al que es mostra a continuació: <br><br>_0123456789.serveis.aoc.cat_ </br> |
+| redirect_uri | URL a la que VALId haurà de retornar el resultat del procés d'autenticació.<br><br> El resultat de la operació pot ser el codi d'autorització per tal que la aplicació web pugui negociar l'_access token_ definitiu o bé un codi d'error en cas de que la validació no s'hagi pogut realitzar amb èxit.<br><br> Aquesta URL s'haurà de proporcionar en el moment del registre de l'aplicació.<br><br>Una aplicació pot tenir més d'una URI de redirecció, però totes han de constar al registre de l'aplicació del VALId. |
 | scope | El paràmetre _scope_ indica una llista de permisos que la aplicació web vol obtenir sobre les dades de l'usuari.<br><br> Ara per ara, VALId només realitza l'autenticació dels usuaris i no gestiona cap autorització, pel que aquest paràmetre haurà de venir informat sempre amb el valor _autenticacio_usuari_ |
-| state | Camp lliure que serà retornat a la aplicació web en el moment de fer-li arribar el resultat de la autenticació (ja sigui un _authorization\_code_ o un _error_).<br><br>Donades les restriccions que hi ha en la codificació de les cadenes de text a les URL es recomana usar cadenes molt simples, sense caràcters especials (accentuats, dièresi, etc...) per tal d'evitar problemes en el moment de realitzar les redireccions. |
-| access\_type | Tipus d'accés. Actualment el protocol OAuth 2.0 només admet els valors _online_ i _offline_. Per a la majoria de casos, s'haurà d'informar el valor online. |
-| approval\_prompt | Aquest paràmetre indica si cal presentar a l'usuari la pantalla de sol·licitud de permisos que vol obtenir l'aplicació web cada cop o només el primer cop que es realitza la autenticació. <br> <br>Donat que VALId no realitza ara per ara tasques d'autorització, aquest camp no es té en compte, tot i que per especificacions del protocol OAuth és necessari informar-lo. |
-| login\_hint | Aquest paràmetre és opcional i normalment conté dades com l'adreça de correu electrònic de l'usuari (si l'aplicació ja la coneix) o un subidentificador. <br><br>VALId no usa aquest paràmetre pel que es pot ometre. |
+| state | Camp lliure que serà retornat a la aplicació web en el moment de fer-li arribar el resultat de la autenticació (ja sigui un _authorization_code_ o un _error_).<br><br>Donades les restriccions que hi ha en la codificació de les cadenes de text a les URL es recomana usar cadenes molt simples, sense caràcters especials (accentuats, dièresi, etc...) per tal d'evitar problemes en el moment de realitzar les redireccions. |
+| access_type | Tipus d'accés. Actualment el protocol OAuth 2.0 només admet els valors _online_ i _offline_. Per a la majoria de casos, s'haurà d'informar el valor online. |
+| approval_prompt | Aquest paràmetre indica si cal presentar a l'usuari la pantalla de sol·licitud de permisos que vol obtenir l'aplicació web cada cop o només el primer cop que es realitza la autenticació. <br> <br>Donat que VALId no realitza ara per ara tasques d'autorització, aquest camp no es té en compte, tot i que per especificacions del protocol OAuth és necessari informar-lo. |
+| login_hint | Aquest paràmetre és opcional i normalment conté dades com l'adreça de correu electrònic de l'usuari (si l'aplicació ja la coneix) o un subidentificador. <br><br>VALId no usa aquest paràmetre pel que es pot ometre. |
 
 A continuació es mostra un exemple de URL d'inici de procés d'autenticació:
 ```
@@ -493,22 +493,22 @@ La signatura ordinària està formada per una signatura XAdES-T que embolcalla (
 | document/algorisme | Algorisme usat per a calcular el resum criptogràfic | S |
 | document/metadades | Metadades informades en la petició, codificades en Base64. | N |
 
-| ![image](https://user-images.githubusercontent.com/32306731/137281698-9dfc2044-94f7-487f-a7d6-9a4e0707feb3.png)  L'evidència de signatura ordinària està conformada per l'agregació d'una sèrie d'evidències XML generades per cadascun dels serveis i mòduls que participen en la validació de la identitat d'un usuari en l'acte de la signatura dels documents referenciats (Base de dades de la Seu de la DGACD, servei de contrasenya al mòbil del CAOC o PSIS de CATCert, entre d'altres).<br> Algunes d'aquestes evidències no són autocontingudes -no estan signades digitalment- de manera que per tal de garantir-ne l'autenticitat i integritat, el Consorci AOC guarda traça de totes les accions realitzades en el procés de la validació de la identitat d'un usuari en un sistema de traces [certificades](#certificades) que podrà ser consultat sota demanda per part de l'organisme requeridor de la mateixa (consultes a la Base de dades de la Seu de la DGACD i crides als diferents serveis de validació d'identitats: contrasenya d'un sol ús SMS al mòbil, MobileID o validació de certificat digital contra PSIS de CATCert).
+| ![image](https://user-images.githubusercontent.com/32306731/137281698-9dfc2044-94f7-487f-a7d6-9a4e0707feb3.png)  L'evidència de signatura ordinària està conformada per l'agregació d'una sèrie d'evidències XML generades per cadascun dels serveis i mòduls que participen en la validació de la identitat d'un usuari en l'acte de la signatura dels documents referenciats (Base de dades de la Seu de la DGACD, servei de contrasenya al mòbil del CAOC o PSIS de CATCert, entre d'altres).<br> Algunes d'aquestes evidències no són autocontingudes -no estan signades digitalment- de manera que per tal de garantir-ne l'autenticitat i integritat, el Consorci AOC guarda traça de totes les accions realitzades en el procés de la validació de la identitat d'un usuari en un sistema de traces [certificades](#11) que podrà ser consultat sota demanda per part de l'organisme requeridor de la mateixa (consultes a la Base de dades de la Seu de la DGACD i crides als diferents serveis de validació d'identitats: contrasenya d'un sol ús SMS al mòbil, MobileID o validació de certificat digital contra PSIS de CATCert).
 
 ---
 
-<a name="certificades"></a> El sistema de traces certificades té la particularitat que els seus registres van enllaçats amb una signatura HMAC: cada registre comença amb el hash SHA-256 del registre anterior xifrat amb una clau privada simètrica que només coneix el sistema. D'aquesta manera és impossible afegir o esborrar una traça a posteriori sense trencar la integritat interna del fitxer de traces, és a dir, es pot detectar en quina línia del fitxer de log s'ha realitzat una alteració.
+<a name="11"></a> El sistema de traces certificades té la particularitat que els seus registres van enllaçats amb una signatura HMAC: cada registre comença amb el hash SHA-256 del registre anterior xifrat amb una clau privada simètrica que només coneix el sistema. D'aquesta manera és impossible afegir o esborrar una traça a posteriori sense trencar la integritat interna del fitxer de traces, és a dir, es pot detectar en quina línia del fitxer de log s'ha realitzat una alteració.
 Addicionalment, cada nit s'executa un procés de consolidació que afegeix un segell de temps a tot el fitxer de traces de forma que assegurem la integritat de tot el fitxer i permet determinar amb fiabilitat la data de creació del mateix i si s’ha modificat o no des d’aleshores.
 
 
 ![4](Captures/4.png)
 
 
-# Annex - evidències del procés de validació <a name="Annex"></a>
+# Annex - evidències del procés de validació <a name="5"></a>
 
 A continuació es mostren uns exemples de les evidencies que es generen en cada pas del procés de validació.
 
-### Evidències generades en la consulta a la Base de Dades de la Seu <a name="Evidències1"></a>
+### Evidències generades en la consulta a la Base de Dades de la Seu <a name="6"></a>
 
 La comunicació amb el servei de la Base de Dades de la Seu de la Direcció General d'Atenció Ciutadana i Difusió (en endavant DGACD) es realitza via uns serveis REST que intercanvien missatges JSON.
 
@@ -582,7 +582,7 @@ Els missatges que s'enregistren com a evidència són els missatges de petició 
 
 ```
 
-### Evidències generades en la validació amb certificat digital <a name="Evidències2"></a>
+### Evidències generades en la validació amb certificat digital <a name="7"></a>
 
 En cas d'autenticació amb certificat digital s'enregistra com evidència tant el missatge de petició de validació del certificat amb el que l'usuari s'autentica com la resposta obtinguda amb el resultat de la validació generat per la plataforma PSIS de CATCert.
 
@@ -666,7 +666,7 @@ Per més detalls sobre les especificacions de la missatgeria DSS corresponent a 
 
 [https://www.aoc.cat/Inici/SERVEIS/Signatura-electronica-i-seguretat/Validador/Com-utilitzar-ho](https://www.aoc.cat/Inici/SERVEIS/Signatura-electronica-i-seguretat/Validador/Com-utilitzar-ho).
 
-### Evidències generades en la validació amb contrasenya al mòbil (SMS) <a name="Evidències3"></a>
+### Evidències generades en la validació amb contrasenya al mòbil (SMS) <a name="8"></a>
 
 En cas de validació d'identitat amb contrasenya SMS al mòbil s'enregistren com evidència tant els missatges de l'operació de generació i enviament de la contrasenya així com la validació posterior.
 
@@ -789,7 +789,7 @@ Un cop l'usuari ha introduït la contrasenya es generen les evidències de valid
 
 ```
 
-### Evidències generades en la validació amb MobileID <a name="Evidències4"></a>
+### Evidències generades en la validació amb MobileID <a name="9"></a>
 
 En cas de validació d'identitat amb MobileID s'enregistren com evidència tant els missatges de les operacions d'inici de validació d'identitat i comprovacións de l'estat així com el XML definiu generat pel servei MobileID.
 
@@ -833,7 +833,7 @@ En cas de validació d'identitat amb MobileID s'enregistren com evidència tant 
 
 ```
 
-### Evidències generades en la validació amb Cl@ve <a name="Evidències5"></a>
+### Evidències generades en la validació amb Cl@ve <a name="10"></a>
 
 En cas de validació d'identitat amb el sistema Cl@ve s'enregistren com evidència tant el tiquet SAML generat per VALId en el moment d'iniciar l'autenticació com el tiquet SAML signat per Cl@ve un cop l'usuari s'ha autenticat correctament (ambdós tiquets codificats en Base64).
 
