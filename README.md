@@ -139,133 +139,118 @@ https://identitats-pre.aoc.cat/o/oauth2/auth?scope=autenticacio_usuari&state=cod
 
 ## 2.2 Tractament de la resposta <a name="2.2"></a>
 
-La resposta s'enviarà a la URL indicada al paràmetre redirect\_uri informat a la URL de petició:
+La resposta s'enviarà a la URL indicada al paràmetre redirect_uri informat a la URL de petició:
 
 - Si l'usuari es valida correctament, la resposta contindrà un codi d'autorització (i si s'havia informat el paràmetre state, també rebrà aquest valor).
 
-https://enotum.aoc.cat/code?code=1/j23a71vICLQm6bTrtp7&state=codi\_estat\_propi
+```
+https://enotum.aoc.cat/code?code=1/j23a71vICLQm6bTrtp7&state=codi_estat_propi
+```
 
-- Si per contra l'autenticació es cancel·lada per l'usuari, l'aplicació client rebrà un codi d'error SESSION\_CANCEL.
-
-https://enotum.aoc.cat/code?error=SESSION\_CANCEL&state=codi\_estat\_propi
+- Si per contra l'autenticació es cancel·lada per l'usuari, l'aplicació client rebrà un codi d'error SESSION_CANCEL.
+```
+https://enotum.aoc.cat/code?error=SESSION_CANCEL&state=codi_estat_propi
+```
 
 Un cop rebut el codi d'autorització, la aplicació client ha de negociar un _token_ d'accés i opcionalment un _token_ de refresc. L'obtenció d'aquest _token_ d'accés finalitza el procés d'autenticació i és llavors quan la aplicació web pot donar l'usuari per autenticat.
 
 La URL que s'usa per negociar el _token_ d'accés és:
-
+```
 https://identitats-pre.aoc.cat/o/oauth2/token
+```
 
 La negociació del _token_ d'accés es realitza mitjançant una crida POST entre el servidor de la aplicació client i el VALId. Aquesta crida ha d'incloure els següents paràmetres:
 
 | _Paràmetre_ | _Descripció_ |
 | --- | --- |
 | code | Codi d'autorització rebut del VALId. |
-| --- | --- |
-| client\_id | Identificador de la aplicació client. Ha de coincidir amb el que s'ha enviat per iniciar el procés d'autenticació. |
-| client\_secret | Cadena de text que fa de secret compartit entre la aplicació client i el VALId. |
-| redirect\_uri | URL de resposta que ha de constar a la llista de URLs registrades per a la aplicació client al VALId. El més senzill és usar la mateixa URL que s'ha especificat al moment d'iniciar el procés d'autenticació. |
-| grant\_type | Per especificació OAuth 2.0, el valor d'aquest camp sempre serà authorization\_code.
- |
+| client_id | Identificador de la aplicació client. Ha de coincidir amb el que s'ha enviat per iniciar el procés d'autenticació. |
+| client_secret | Cadena de text que fa de secret compartit entre la aplicació client i el VALId. |
+| redirect_uri | URL de resposta que ha de constar a la llista de URLs registrades per a la aplicació client al VALId. El més senzill és usar la mateixa URL que s'ha especificat al moment d'iniciar el procés d'autenticació. |
+| grant_type | Per especificació OAuth 2.0, el valor d'aquest camp sempre serà authorization_code. |
 
 Un exemple de petició POST seria similar a el que es mostra a continuació:
+```json
+   POST /o/oauth2/token HTTP/1.1
+   Host: accounts-dev.aoc.cat
+   Content-Type: application/x-www-form-urlencoded
+   
+   code=1/j23a71vICLQm6bTrtp7&
+   client_id=0123456789.serveis.aoc.cat&
+   client_secret=...............&
+   redirect_uri=https://enotum.aoc.cat/code&
+   grant_type=authorization_code
 
-POST /o/oauth2/token HTTP/1.1
-
-Host: accounts-dev.aoc.cat
-
-Content-Type: application/x-www-form-urlencoded
-
-code=1/j23a71vICLQm6bTrtp7&
-
-client\_id=0123456789.serveis.aoc.cat&
-
-client\_secret=...............&
-
-redirect\_uri=https://enotum.aoc.cat/code&
-
-grant\_type=authorization\_code
+```
 
 La resposta a aquesta crida conté els següents camps:
 
 | _Paràmetre_ | _Descripció_ |
 | --- | --- |
-| access\_token | _Token_ d'accés que acredita a autenticació de l'usuari.
-Aquest _token_ es pot emprar per obtenir una sèrie de dades com les evidències d'autenticació o les dades bàsiques de l'usuari (document d'identitat i número de telèfon) invocant una sèrie de serveis REST de dades (vegeu apartat 3 d'aquest document). |
-| refresh\_token | _Token_ de refresc que pot ser usat per obtenir nous _tokens_ d'accés a mesura que aquests vagin expirant.
-Un _token_ de refresc serà vàlid fins que l'usuari el revoqui i només serà emès pel VALId si a la petició d'autenticació inicial es va especificar el valor offline per al paràmetre access\_type. |
-| expires\_in | Temps de vida restant per al _token_, en segons. |
-| token\_type | Tipus de token generat. Actualment aquest camp sempre tindrà el valor Bearer. |
+| access_token | _Token_ d'accés que acredita a autenticació de l'usuari.<br><br>Aquest _token_ es pot emprar per obtenir una sèrie de dades com les evidències d'autenticació o les dades bàsiques de l'usuari (document d'identitat i número de telèfon) invocant una sèrie de serveis REST de dades (vegeu apartat 3 d'aquest document). |
+| refresh_token | _Token_ de refresc que pot ser usat per obtenir nous _tokens_ d'accés a mesura que aquests vagin expirant.<br><br>Un _token_ de refresc serà vàlid fins que l'usuari el revoqui i només serà emès pel VALId si a la petició d'autenticació inicial es va especificar el valor offline per al paràmetre access_type. |
+| expires_in | Temps de vida restant per al _token_, en segons. |
+| token_type | Tipus de token generat. Actualment aquest camp sempre tindrà el valor Bearer. |
 
 La resposta a la crida vindrà donada amb representació JSON.
-
+``` json
 {
-
-"access\_token":"1/g073bzAr24Fz3Z1e44g73v",
-
-"expires\_in":3600,
-
-"token\_type":"Bearer"
-
-}
+     "access_token":"1/g073bzAr24Fz3Z1e44g73v",
+     "expires_in":3600,
+     "token_type":"Bearer"
+   }
+```
 
 ### 2.2.1 Generació d'un nou accés token a partir del refresh Token. <a name="2.2.1"></a>
 
 Si en la petició d'autenticació inicial s'especifica el valor offline al paràmetre accés\_type, la resposta generada contindria token de refresc assignat per a poder regenerar nous tokens d'autenticació:
 
+```json
 {
+     "access_token":"1/g073bzAr24Fz3Z1e44g73v",
+     "refresh_token":"zZ5c9nbFmaEQJbFaHknXQe4SjyYWwAu1qiw7Ic9_",
+     "expires_in":3600,
+     "token_type":"Bearer"
+   }
 
-"access\_token":"1/g073bzAr24Fz3Z1e44g73v",
-
-"refresh\_token":"zZ5c9nbFmaEQJbFaHknXQe4SjyYWwAu1qiw7Ic9\_",
-
-"expires\_in":3600,
-
-"token\_type":"Bearer"
-
-}
+```
 
 A partir d'aquest moment, es podran demanar nous tokens a partir de la URL que s'usa per negociar el _token_ d'accés:
-
+```
 https://identitats-pre.aoc.cat/o/oauth2/token
+```
 
-A diferència del cas anterior, caldrà especificar el valor refresh\_token al paràmetre grant\_type i en comptes d'enviar el paràmetre code, caldrà enviar el paràmetre refresh\_token amb el valor de la resposta anterior. Per exemple:
-
-POST /o/oauth2/token HTTP/1.1
-
-Host: accounts-dev.aoc.cat
-
-Content-Type: application/x-www-form-urlencoded
-
-**refresh\_token=zZ5c9nbFmaEQJbFaHknXQe4SjyYWwAu1qiw7Ic9\_**
-
-client\_id=0123456789.serveis.aoc.cat&
-
-client\_secret=...............&
-
-redirect\_uri=https://enotum.aoc.cat/code&
-
-**grant\_type=refresh\_token**
+A diferència del cas anterior, caldrà especificar el valor refresh_token al paràmetre grant_type i en comptes d'enviar el paràmetre code, caldrà enviar el paràmetre refresh_token amb el valor de la resposta anterior. Per exemple:
+```json
+   POST /o/oauth2/token HTTP/1.1
+   Host: accounts-dev.aoc.cat
+   Content-Type: application/x-www-form-urlencoded
+   
+   refresh_token=zZ5c9nbFmaEQJbFaHknXQe4SjyYWwAu1qiw7Ic9_
+   client_id=0123456789.serveis.aoc.cat&
+   client_secret=...............&
+   redirect_uri=https://enotum.aoc.cat/code&
+   grant_type=refresh_token
+```
 
 La resposta a aquesta crida contindria el nou accés token generat:
 
-{
+```
+   {
+     "access_token":"1/eZU0_DyEUjETrw9B0VIWZvSympnrm-vnKdVzC1xF",
+     "refresh_token":"zZ5c9nbFmaEQJbFaHknXQe4SjyYWwAu1qiw7Ic9_",
+     "expires_in":3600,
+     "token_type":"Bearer"
+   }
 
-"access\_token":"1/eZU0\_DyEUjETrw9B0VIWZvSympnrm-vnKdVzC1xF",
-
-"refresh\_token":"zZ5c9nbFmaEQJbFaHknXQe4SjyYWwAu1qiw7Ic9\_",
-
-"expires\_in":3600,
-
-"token\_type":"Bearer"
-
-}
+```
 
 ## 2.3 Revocació d'un token d'accés <a name="2.3"></a>
 
 Per revocar un _token_ d'accés l'aplicació client pot realitzar una invocació a la següent URL del VALId:
-
-https://identitats-pre.aoc.cat/o/oauth2/revoke?token=\<token\_acces\>
-
+```
+https://identitats-pre.aoc.cat/o/oauth2/revoke?token=<token_acces>
+```
 Si la revocació es realitza correctament, l'aplicació rebrà un codi de resposta HTTP 200. En qualsevol altre cas, rebrà un codi HTTP 400 i un missatge d'error.
 
 La revocació del _token_ d'accés només implica que no es podrà invocar els serveis REST oferts per obtenir dades de l'usuari o les evidencies del procés d'autenticació. En cap cas la revocació d'un _token_ implica el tancament de la sessió web establerta entre el navegador de l'usuari i el VALId.
@@ -279,9 +264,9 @@ El problema d'aquest escenari és que la sessió d'usuari segueix estant activa 
 Per evitar aquesta situació s'ha implementat una funcionalitat que permet invalidar la sessió d'usuari al VALId tot invocant una URL, a l'igual que es fa per revocar un _token_ d'accés. Cal aclarir que aquesta funcionalitat no entra dins del protocol OAuth 2.0 i es tracta d'una característica implementada a VALId per requeriments del propi servei.
 
 Així doncs, per tancar la sessió d'usuari a VALId, l'aplicació client pot realitzar una invocació a la següent URL:
-
-https://identitats-pre.aoc.cat/o/oauth2/logout?token=\<token\_acces\>
-
+```
+https://identitats-pre.aoc.cat/o/oauth2/logout?token=<token_acces>
+```
 La invocació retornarà un codi HTTP 200 si la operació s'ha realitzat correctament o un codi HTTP 400 si s'ha produït algun error, junt amb un missatge descriptiu.
 
 # 3 Serveis de dades de suport a les aplicacions <a name="3"></a>
@@ -298,77 +283,32 @@ El servei proporciona la següent informació:
 
 El servei d'obtenció de dades de l'usuari té un únic paràmetre, l'_access token_ obtingut per la aplicació client en el moment de fer la autenticació.
 
-| _Mètode (GET)_ | https://identitats-pre.aoc.cat/serveis-rest/getUserInfo
- |
+| _Mètode (GET)_ | https://identitats-pre.aoc.cat/serveis-rest/getUserInfo |
 | --- | --- |
-| _Paràmetre_ | AccessToken
- |
-| _Resposta (exemple)_ | {"status":"ok","identifier":"99999999R","prefix":"0034","phone":"609112233","documentType":"1"} |
+| _Paràmetre_ | AccessToken |
+| _Resposta (exemple)_ | {<br>"status":"ok",<br>"identifier":"99999999R",<br>"prefix":"0034",<br>"phone":"609112233",<br>"documentType":"1"<br>} |
 
 La resposta obtinguda, en format JSON, conté les següents dades:
 
-| status | Resultat de l'operació. Cadena de text que pot tenir el valor ok o ko.
- |
+| status | Resultat de l'operació. Cadena de text que pot tenir el valor ok o ko. |
 | --- | --- |
-| identifier | Document identificador de l'usuari. L'identificador por ser un NIF, un NIE o un número de passaport.
- |
-| prefix | Codi o prefix internacional del telèfon. Per exemple 0034 per al territori espanyol.
- |
-| phone | Número de telèfon mòbil de l'usuari.
- |
-| identifierType | Tipus de document d'identitat. 1=NIF, 2=NIE, 3=Passaport, 4=Altres (targeta de residència comunitària, permís de residència de treball, document identificador d'un país de la CE). Només si l'usuari s'ha autenticat amb idCAT Mòbil o MobileID.
- |
-| name | El nom de l'usuari (en cas que el mecanisme de validació el proporcioni).
- |
-| surnames | Els cognoms de l'usuari (en cas que el mecanisme de validació el proporcioni).
- |
-| surname1 | Primer cognom de l'usuari (en cas que el mecanisme de validació proporcioni els cognoms per separat).
- |
-| surname2 | Segon cognom de l'usuari (en cas que el mecanisme de validació proporcioni els cognoms per separat i el segon cognom estigui informat).
- |
-| countryCode | Codi de país de l'usuari en format ISO 3166-1 (en cas que el mecanisme de validació el proporcioni).
- |
-| email | El correu de l'usuari (en cas que el mecanisme de validació el proporcioni).
- |
-| userCertificate | Certificat digital de l'usuari si aquest s'ha autenticat mitjançant certificat.
- |
-| certificateType | En cas d'autenticació amb certificat digital, tipus de certificat:
-
-- 0: Persona física
-- 1: Persona jurídica
-- 2: Component SSL
-- 3: Seu electrònica
-- 4: Segell electrònic
-- 5: Empleat públic
-- 6: Entitat sense personalitat jurídica
-- 7: Empleat públic amb pseudònim
-- 8: Qualificat de segell
-- 9: Qualificat d'autenticació de lloc web
-- 10: Certificat de segell de temps
-- 11: Representant de persona jurídica
-- 12: Representant d'entitat sense personalitat jurídica
-
- |
-| companyId | En cas d'autenticació amb certificat digital, CIF vinculat al certificat si aquest està informat.
- |
-| companyName | En cas d'autenticació amb certificat digital, nom de l'empresa vinculat al certificat si aquest està informat.
- |
-| method
- | Mètode d'autenticació emprat per l'usuari (idcatmobil, certificat, clave, mobileid, mobileconnect).
- |
-| assuranceLevel | Nivell de seguretat de l'autenticació practicada d'acord amb el ReIdAS (low, substantial, high):
-
-- Baix: idCAT Mòbil acreditat telemàticament.
-
-
-- Substancial: idCAT Mòbil acreditat amb certificat o presencialment, idCAT Mobile Connect, Cl@ve, certificat qualificat en programari.
-
-
-- Alt: certificat qualificat en targeta.
-
- |
-| error | En cas d'error, missatge descriptiu de l'error que s'ha produït.
- |
+| identifier | Document identificador de l'usuari. L'identificador por ser un NIF, un NIE o un número de passaport. |
+| prefix | Codi o prefix internacional del telèfon. Per exemple 0034 per al territori espanyol. |
+| phone | Número de telèfon mòbil de l'usuari. |
+| identifierType | Tipus de document d'identitat. 1=NIF, 2=NIE, 3=Passaport, 4=Altres (targeta de residència comunitària, permís de residència de treball, document identificador d'un país de la CE). Només si l'usuari s'ha autenticat amb idCAT Mòbil o MobileID. |
+| name | El nom de l'usuari (en cas que el mecanisme de validació el proporcioni). |
+| surnames | Els cognoms de l'usuari (en cas que el mecanisme de validació el proporcioni). |
+| surname1 | Primer cognom de l'usuari (en cas que el mecanisme de validació proporcioni els cognoms per separat). |
+| surname2 | Segon cognom de l'usuari (en cas que el mecanisme de validació proporcioni els cognoms per separat i el segon cognom estigui informat). |
+| countryCode | Codi de país de l'usuari en format ISO 3166-1 (en cas que el mecanisme de validació el proporcioni). |
+| email | El correu de l'usuari (en cas que el mecanisme de validació el proporcioni). |
+| userCertificate | Certificat digital de l'usuari si aquest s'ha autenticat mitjançant certificat. |
+| certificateType | En cas d'autenticació amb certificat digital, tipus de certificat:<br>- 0: Persona física<br>- 1: Persona jurídica<br>- 2: Component SSL<br>- 3: Seu electrònica<br>- 4: Segell electrònic<br>- 5: Empleat públic<br>- 6: Entitat sense personalitat jurídica<br>- 7: Empleat públic amb pseudònim<br>- 8: Qualificat de segell<br>- 9: Qualificat d'autenticació de lloc web<br>- 10: Certificat de segell de temps<br>- 11: Representant de persona jurídica<br>- 12: Representant d'entitat sense personalitat jurídica |
+| companyId | En cas d'autenticació amb certificat digital, CIF vinculat al certificat si aquest està informat. |
+| companyName | En cas d'autenticació amb certificat digital, nom de l'empresa vinculat al certificat si aquest està informat. |
+| method | Mètode d'autenticació emprat per l'usuari (_idcatmobil, certificat, clave, mobileid, mobileconnect_). |
+| assuranceLevel | Nivell de seguretat de l'autenticació practicada d'acord amb el ReIdAS (_low, substantial, high_):<br>- Baix: idCAT Mòbil acreditat telemàticament.<br>- Substancial: idCAT Mòbil acreditat amb certificat o presencialment, idCAT Mobile Connect, Cl@ve, certificat qualificat en programari.<br>- Alt: certificat qualificat en targeta. |
+| error | En cas d'error, missatge descriptiu de l'error que s'ha produït. |
 
 ## 3.2 Evidències d'autenticació <a name="3.2"></a>
 
@@ -381,26 +321,22 @@ Quan l'usuari s'autentica al VALId es generen una sèrie d'evidències de cadasc
 
 El servei d'obtenció d'evidències té un únic paràmetre, l'_access token_ obtingut per la aplicació client en el moment de fer la autenticació.
 
-| _Mètode (GET)_ | https://identitats-pre.aoc.cat/serveis-rest/getAuthenticationEvidence
- |
+| _Mètode (GET)_ | https://identitats-pre.aoc.cat/serveis-rest/getAuthenticationEvidence |
 | --- | --- |
-| _Paràmetre_ | AccessToken (GET)
- |
-| _Resposta (exemple)_ | {"status": "ok","evidences":["PD94bWwgdmVyc2l(...)RpY2lvPg==","PD94bWwgdmVyc2lvb(...)vc3RhPg==","PD94bWwgdmVy(...)jaW8+"]} |
+| _Paràmetre_ | AccessToken (GET) |
+| _Resposta (exemple)_ | {<br>&nbsp;&nbsp;&nbsp;&nbsp;"status": "ok",<br>&nbsp;&nbsp;&nbsp;&nbsp;"evidences":<br>&nbsp;&nbsp;&nbsp;&nbsp;[<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PD94bWwgdmVyc2l(...)RpY2lvPg==",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PD94bWwgdmVyc2lvb(...)vc3RhPg==",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PD94bWwgdmVy(...)jaW8+"<br>&nbsp;&nbsp;&nbsp;&nbsp;]<br>} |
 
 La resposta obtinguda, en format JSON, conté les següents dades:
 
-| status | Resultat de l'operació. Cadena de text que pot tenir el valor ok o ko.
- |
+| status | Resultat de l'operació. Cadena de text que pot tenir el valor ok o ko. |
 | --- | --- |
-| evidences | Llista d'evidències amb les evidències codificades en Base64.
-Per més detalls sobre les evidències d'autenticació, consulteu l'annex d'aquest mateix document. |
+| evidences | Llista d'evidències amb les evidències codificades en Base64. <br>Per més detalls sobre les evidències d'autenticació, consulteu l'annex d'aquest mateix document. |
 
 # 4 Operacions de signatura ordinària <a name="4"></a>
 
 VALId ofereix dos mecanismes de signatura ordinària que es detallen a continuació:
 
-- Signatura ordinària a partir de l'_access__token_ obtingut en el procés d'autenticació.
+- Signatura ordinària a partir de l'_access token_ obtingut en el procés d'autenticació.
 - Signatura ordinària a partir de l_'acces token_ obtingut en el procés d'autenticació i una nova acció d'autenticació realitzada per l'usuari (p.e. contrasenya SMS al mòbil).
 
 ## 4.1 Signatura ordinària a partir de l'accés token <a name="4.1"></a>
@@ -409,173 +345,132 @@ L'autenticació de l'usuari es pot usar com a clau per generar el que s'anomena 
 
 Aquesta signatura consisteix en la generació d'una evidència signada en la que consten els noms i resums criptogràfics dels documents que es volen signar.
 
-| _Mètode (POST)_ | https://identitats-pre.aoc.cat/serveis-rest/getBasicSignature
- |
+| _Mètode (POST)_ | https://identitats-pre.aoc.cat/serveis-rest/getBasicSignature |
 | --- | --- |
-| _Petició (exemple)_ | { "accessToken":"ACCESS-TOKEN", "documents": [{ "name":"fitxer1.pdf", "algorithm":"SHA1", "hash":"UkVTVU0=""metadata":"classificacio=00002;format=PDF" }, { "name":"fitxer2.doc", "algorithm":"SHA1", "hash":"UkVTVU0=" }], "pdfEvidence":"true"} |
-| _Resposta (exemple)_ | {"status":"ok","evidence":"PD94bW0dXJhT (...) 6U2lnbmF0dXJlPg==","pdfEvidence":"PD94bW0dXJhT (...) 6U2lnbmF0dXJlPg=="} |
+| _Petició (exemple)_ | {<br> &nbsp;&nbsp;&nbsp;&nbsp;"accessToken":"ACCESS-TOKEN",<br> &nbsp;&nbsp;&nbsp;&nbsp;"documents": [<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"name":"fitxer1.pdf", <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"algorithm":"SHA1",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "hash":"UkVTVU0="<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"metadata":"classificacio=00002;format=PDF" <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"name":"fitxer2.doc",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "algorithm":"SHA1",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "hash":"UkVTVU0=" <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;],<br> "pdfEvidence":"true"<br>} |
+| _Resposta (exemple)_ | {<br>&nbsp;&nbsp;&nbsp;&nbsp;"status":"ok",<br>&nbsp;&nbsp;&nbsp;&nbsp;"evidence":"PD94bW0dXJhT (...) 6U2lnbmF0dXJlPg==",<br>&nbsp;&nbsp;&nbsp;&nbsp;"pdfEvidence":"PD94bW0dXJhT (...) 6U2lnbmF0dXJlPg=="<br>} |
 
 El servei d'obtenció de la signatura té com a paràmetres (estructura JSON), l'_access token_ obtingut per la aplicació client en el moment de fer l'autenticació i les dades dels documents :
 
-| accessToken | L'_access token_ obtingut per la aplicació client en el moment de fer la autenticació
- |
+| accessToken | L'_access token_ obtingut per la aplicació client en el moment de fer la autenticació |
 | --- | --- |
-| documents | Llista de documents dels quals es vol generar la signatura ordinària.
- |
-| name | Nom del document.
- |
-| algorithm
- | Algorisme emprat per calcular el resum criptogràfic del document. |
-| hash
- | Resum criptogràfic del document. |
-| metadata
- | Dades addicionals –text lliure- que s'incorporaran a l'evidència generada, vinculada al document.
- |
-| pdfEvidence | Opcional. Si s'informa l'atribut es generarà la versió imprimible en PDF de l'evidència de la signatura ordinària.
- |
+| documents | Llista de documents dels quals es vol generar la signatura ordinària. |
+| name | Nom del document. |
+| algorithm | Algorisme emprat per calcular el resum criptogràfic del document. |
+| hash | Resum criptogràfic del document. |
+| metadata | Dades addicionals –text lliure- que s'incorporaran a l'evidència generada, vinculada al document. |
+| pdfEvidence | Opcional. Si s'informa l'atribut es generarà la versió imprimible en PDF de l'evidència de la signatura ordinària. |
 
 La resposta obtinguda, en format JSON, conté les següents dades:
 
-| status | Resultat de l'operació. Cadena de text que pot tenir el valor ok o ko.
- |
+| status | Resultat de l'operació. Cadena de text que pot tenir el valor ok o ko. |
 | --- | --- |
-| evidence | Signatura XAdES-T amb l'evidència de la signatura ordinària codificada en Base64.
- Per més detalls sobre l'evidència de la signatura consulteu l'apartat 4.3 d'aquest mateix document.
- |
-| pdfEvidence | Versió imprimible en format PDF de l'evidència de la signatura ordinària codificada en Base64.
- |
-| error | En cas d'error, descripció de l'error que s'ha produït.
- |
+| evidence | Signatura XAdES-T amb l'evidència de la signatura ordinària codificada en Base64.<br> Per més detalls sobre l'evidència de la signatura consulteu l'apartat 4.3 d'aquest mateix document. |
+| pdfEvidence | Versió imprimible en format PDF de l'evidència de la signatura ordinària codificada en Base64. |
+| error | En cas d'error, descripció de l'error que s'ha produït. |
 
 ## 4.2 Signatura ordinària a partir de l'accés token i acció d'autenticació addicional <a name="4.2"></a>
 
 La seqüència de signatura s'inicia quan l'aplicació web que s'integra desitja generar una signatura ordinària però, a diferència del cas anterior, es vol que l'usuari realitzi una nova acció d'autenticació (p.e. informar una contrasenya d'un sòl ús SMS al seu mòbil).
 
-Per fer-ho, l'aplicació web ha de realitzar una operació REST initBasicSignature tot indicant l'_access token_ associat a l'usuari autenticat, una URL de redirecció de l'aplicació client on rebre el resultat de la signatura i les dades dels documents a signar:
+Per fer-ho, l'aplicació web ha de realitzar una operació REST _initBasicSignature_ tot indicant l'_access token_ associat a l'usuari autenticat, una URL de redirecció de l'aplicació client on rebre el resultat de la signatura i les dades dels documents a signar:
 
-![](RackMultipart20230131-1-aua1lp_html_144c881b990a8ff3.gif)
+![2](Captures/2.png)
 
-| _Mètode (POST)_ | https://identitats-pre.aoc.cat/serveis-rest/initBasicSignature
- |
+| _Mètode (POST)_ | https://identitats-pre.aoc.cat/serveis-rest/initBasicSignature |
 | --- | --- |
-| _Petició (exemple)_ | { "accessToken":"ACCESS-TOKEN","redirectUri":"URL-REDIRECT", "documents": [{ "name":"fitxer1.pdf", "algorithm":"SHA1", "hash":"UkVTVU0=""metadata":"classificacio=00002;format=PDF" }, { "name":"fitxer2.doc", "algorithm":"SHA1", "hash":"UkVTVU0=" }]} |
-| _Resposta (exemple)_ | {"status":"ok","signatureCode":"XXXXXXXXXXXXXXXXXXX"} |
+| _Petició (exemple)_ | {<br>&nbsp;&nbsp;&nbsp;&nbsp; "accessToken":"ACCESS-TOKEN",<br>&nbsp;&nbsp;&nbsp;&nbsp;"redirectUri":"URL-REDIRECT",<br>&nbsp;&nbsp;&nbsp;&nbsp; "documents": [<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"name":"fitxer1.pdf",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "algorithm":"SHA1", <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"hash":"UkVTVU0=""metadata":"classificacio=00002;format=PDF" <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"name":"fitxer2.doc", <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"algorithm":"SHA1",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "hash":"UkVTVU0=" <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;]<br>} |
+| _Resposta (exemple)_ | {<br>&nbsp;&nbsp;&nbsp;&nbsp;"status":"ok",<br>&nbsp;&nbsp;&nbsp;&nbsp;"signatureCode":"XXXXXXXXXXXXXXXXXXX"<br>} |
 
 El servei d'inici de signatura té com a paràmetres (estructura JSON), l'_access token_ obtingut per la aplicació client en el moment de fer l'autenticació i les dades dels documents:
 
-| accessToken | L'_access token_ obtingut per la aplicació client en el moment de fer la autenticació
- |
+| accessToken | L'_access token_ obtingut per la aplicació client en el moment de fer la autenticació |
 | --- | --- |
-| redirectUri | URL de redirecció de l'aplicació client que rebrà el resultat de la signatura.
- |
-| documents | Llista de documents dels quals es vol generar la signatura ordinària.
- |
-| name | Nom del document.
- |
-| algorithm
- | Algorisme emprat per calcular el resum criptogràfic del document. |
-| hash
- | Resum criptogràfic del document. |
-| metadata
- | Dades addicionals –text lliure- que s'incorporaran a l'evidència generada, vinculada al document.
- |
-| pdfEvidence | Opcional. Si s'informa l'atribut es generarà la versió imprimible en PDF de l'evidència de la signatura ordinària.
- |
+| redirectUri | URL de redirecció de l'aplicació client que rebrà el resultat de la signatura. |
+| documents | Llista de documents dels quals es vol generar la signatura ordinària. |
+| name | Nom del document. |
+| algorithm | Algorisme emprat per calcular el resum criptogràfic del document. |
+| hash | Resum criptogràfic del document. |
+| metadata | Dades addicionals –text lliure- que s'incorporaran a l'evidència generada, vinculada al document. |
+| pdfEvidence | Opcional. Si s'informa l'atribut es generarà la versió imprimible en PDF de l'evidència de la signatura ordinària. |
 
 La resposta obtinguda, en format JSON, conté les següents dades:
 
-| status | Resultat de l'operació. Cadena de text que pot tenir el valor ok o ko.
- |
+| status | Resultat de l'operació. Cadena de text que pot tenir el valor ok o ko. |
 | --- | --- |
-| signatureCode | Codi que identifica el procés de signatura que s'inicia.
- |
-| error | En cas d'error, descripció de l'error que s'ha produït.
- |
+| signatureCode | Codi que identifica el procés de signatura que s'inicia. |
+| error | En cas d'error, descripció de l'error que s'ha produït. |
 
-VALId verifica la validesa d'aquest _access token_ i retorna un signatureCode (d'un sòl ús) que l'aplicació client haurà d'informar con a paràmetre en la següent URL del VALId:
-
-https://identitats-pre.aoc.cat/o/sign?signature\_code=\<signature code\>
-
+VALId verifica la validesa d'aquest _access token_ i retorna un _signatureCode_ (d'un sòl ús) que l'aplicació client haurà d'informar con a paràmetre en la següent URL del VALId:
+```
+https://identitats-pre.aoc.cat/o/sign?signature_code=<signature code>
+```
 En aquest punt, VALID presenta a l'usuari la pantalla que li permetrà realitzar la nova autenticació.
 
-![](RackMultipart20230131-1-aua1lp_html_6891205a05f7ed8b.gif)
+![3](Captures/3.png)
 
-Un cop l'usuari ha realitzat la nova acció d'autenticació, VALId realitza una redirecció a la URL de signatura informada per l'aplicació client en la operació initBasicSignature indicant com a paràmetres el signatureCode que identifica el procés de signatura i el codi resultat de l'operació en el paràmetre status:
+Un cop l'usuari ha realitzat la nova acció d'autenticació, VALId realitza una redirecció a la URL de signatura informada per l'aplicació client en la operació _initBasicSignature_ indicant com a paràmetres el _signatureCode_ que identifica el procés de signatura i el codi resultat de l'operació en el paràmetre _status_:
 
-- Si l'usuari ha signat correctament, la resposta contindrà el paràmetre status amb el valor OK:
-
+- Si l'usuari ha signat correctament, la resposta contindrà el paràmetre status amb el valor _OK_:
+```
 https://enotum.aoc.cat/signatura?signatureCode=1/j23a71vICLQm6bTrtp7&state=OK
+```
 
-- Si l'usuari ha cancel·lat la signatura, la resposta contindrà el paràmetre status amb el valor CANCEL:
-
+- Si l'usuari ha cancel·lat la signatura, la resposta contindrà el paràmetre status amb el valor _CANCEL_:
+```
 https://enotum.aoc.cat/signatura?signatureCode=1/j23a71vICLQm6bTrtp7&state=CANCEL
-
-- Si per contra hi ha cap error realitzant la signatura, l'aplicació client rebrà un codi d'estat ERROR:
-
+```
+- Si per contra hi ha cap error realitzant la signatura, l'aplicació client rebrà un codi d'estat _ERROR_:
+```
 https://enotum.aoc.cat/signatura?signatureCode=1/j23a71vICLQm6bTrtp7&state=ERROR
+```
+Si la signatura s'ha realitzat correctament, l'aplicació client pot sol·licitar a VALId la signatura ordinària generada realitzant una operació REST _getBasicSignature_.
 
-Si la signatura s'ha realitzat correctament, l'aplicació client pot sol·licitar a VALId la signatura ordinària generada realitzant una operació REST getBasicSignature.
+| ![image](https://user-images.githubusercontent.com/32306731/137281698-9dfc2044-94f7-487f-a7d6-9a4e0707feb3.png) És important que l'aplicació client controli el número d'accessos a la seva URL de redirecció on se li comunica el resultat de la signatura per evitar descàrregues de signatures ja obtingudes prèviament.
+ 
 
-| ![](RackMultipart20230131-1-aua1lp_html_e0859da4ac8c0eca.png) | És important que l'aplicació client controli el número d'accessos a la seva URL de redirecció on se li comunica el resultat de la signatura per evitar descàrregues de signatures ja obtingudes prèviament.
- |
+| _Mètode (POST)_ | https://identitats-pre.aoc.cat/serveis-rest/getBasicSignature |
 | --- | --- |
-
-| _Mètode (POST)_ | https://identitats-pre.aoc.cat/serveis-rest/getBasicSignature
- |
-| --- | --- |
-| _Petició (exemple)_ | { "accessToken":"ACCESS-TOKEN", "signatureCode":"SIGNATURE-CODE"} |
-| _Resposta (exemple)_ | {"status":"ok","evidence":"PD94bW0dXJhT (...) 6U2lnbmF0dXJlPg=="} |
+| _Petició (exemple)_ | { <br>&nbsp;&nbsp;&nbsp;&nbsp;"accessToken":"ACCESS-TOKEN", <br>&nbsp;&nbsp;&nbsp;&nbsp;"signatureCode":"SIGNATURE-CODE"<br>} |
+| _Resposta (exemple)_ | {<br>&nbsp;&nbsp;&nbsp;&nbsp;"status":"ok",<br>&nbsp;&nbsp;&nbsp;&nbsp;"evidence":"PD94bW0dXJhT (...) 6U2lnbmF0dXJlPg=="<br>} |
 
 El servei d'obtenció del resultat la signatura té com a paràmetres (estructura JSON), l'_access token_ obtingut per la aplicació client en el moment de fer l'autenticació i les dades dels documents :
 
-| accessToken | L'_access token_ obtingut per la aplicació client en el moment de fer la autenticació
- |
+| accessToken | L'_access token_ obtingut per la aplicació client en el moment de fer la autenticació |
 | --- | --- |
-| signatureCode | Codi del procés de signatura realitzada correctament del qual es vol recollir l'evidència.
- |
+| signatureCode | Codi del procés de signatura realitzada correctament del qual es vol recollir l'evidència. |
 
 La resposta obtinguda, en format JSON, conté les següents dades:
 
-| status | Resultat de l'operació. Cadena de text que pot tenir el valor ok o ko.
- |
+| status | Resultat de l'operació. Cadena de text que pot tenir el valor ok o ko. |
 | --- | --- |
-| evidence | Signatura XAdES-T amb l'evidència de la signatura ordinària codificada en Base64.
- Per més detalls sobre l'evidència de la signatura consulteu l'apartat 4.3 d'aquest mateix document.
- |
-| pdfEvidence | Versió imprimible en format PDF de l'evidència de la signatura ordinària codificada en Base64.
- |
-| error | En cas d'error, descripció de l'error que s'ha produït.
- |
+| evidence | Signatura XAdES-T amb l'evidència de la signatura ordinària codificada en Base64.<br> Per més detalls sobre l'evidència de la signatura consulteu l'apartat 4.3 d'aquest mateix document. |
+| pdfEvidence | Versió imprimible en format PDF de l'evidència de la signatura ordinària codificada en Base64. |
+| error | En cas d'error, descripció de l'error que s'ha produït. |
 
 ## 4.3 Consideracions sobre el resum criptogràfic <a name="4.3"></a>
 
 Els mètodes descrits per la obtenció de signatures ordinàries permeten a les aplicacions usuàries vincular la identitat autenticada dels usuaris amb el resum criptogràfic d'un document que la pròpia aplicació envia. L'aplicació ha d'informar, per tant, tan de l'algorisme resum emprat com el valor que pren.
 
-VALId no porta a terme cap comprovació sobre els valors enviats per les aplicacions usuàries. Tot i això es recomana seguir les indicacions estandarditzades a l'hora de definir-los, i que W3C publica al seu document XML Security Algorithm Cross-Reference
-# 4
-.
+VALId no porta a terme cap comprovació sobre els valors enviats per les aplicacions usuàries. Tot i això es recomana seguir les indicacions estandarditzades a l'hora de definir-los, i que W3C publica al seu document [XML Security Algorithm Cross-Reference][4].
+
+[4]:https://www.w3.org/TR/xmlsec-algorithms/
 
 Per exemple, si l'algorisme que es vol emprar, i que actualment es recomana, és SHA256, l'identificador de l'algorisme hauria de ser la URI http://www.w3.org/2001/04/xmlenc#sha256 i el valor hauria de ser la codificació en base64 de la cadena de bits vista com a un flux de 32 octets.
 
 Un document, per tant, quedaria correctament identificat, per exemple, de la següent manera:
 
+```
 "documents": [
-
-{
-
-"name":"fitxer1.pdf",
-
-"algorithm":"[http://www.w3.org/2001/04/xmlenc#sha256](http://www.w3.org/2001/04/xmlenc#sha256)",
-
-"hash":"mx3kGyP73e+5bGsYdLNmKQoy0Wf1aK5lgjh1tU3HWF8="
-
-"metadata":"classificacio=00002;format=PDF"
-
-},
-
+    	{
+			"name":"fitxer1.pdf",
+			"algorithm":"http://www.w3.org/2001/04/xmlenc#sha256",
+			"hash":"mx3kGyP73e+5bGsYdLNmKQoy0Wf1aK5lgjh1tU3HWF8="
+       "metadata":"classificacio=00002;format=PDF"
+		},
 ...
-
 ]
+```
 
 ## 4.4 Missatge de signatura ordinària <a name="4.4"></a>
 
@@ -585,55 +480,29 @@ La signatura ordinària està formada per una signatura XAdES-T que embolcalla (
 
 | _Element_ | _Descripció_ | _Obligatori_ |
 | --- | --- | --- |
-| timestamp | Data de l'acte de signatura.
- | S |
-| --- | --- | --- |
-| identificador | Identificador del procés d'autenticació de l'usuari que realitza l'acte de signatura.
- | S |
-| metode | Mètode amb el que l'usuari s'ha autenticat:
-- idcatmobil
-- certificat
-- clave
-- mobileid
-- mobileconnect
+| timestamp | Data de l'acte de signatura. | S ||
+| identificador | Identificador del procés d'autenticació de l'usuari que realitza l'acte de signatura. | S |
+| metode | Mètode amb el que l'usuari s'ha autenticat:<br>- idcatmobil<br>- certificat<br>- clave<br>- mobileid<br>- mobileconnect | S |
+| identitat/evidencia | Evidències d'autenticació. Inclou tots els missatges de petició i resposta bescanviats entre el broker d'identitats i els diferents serveis d'autenticació. | S |
+| identitat/evidencia@dataGeneracio | Data de generació de la evidència. | S |
+| identitat/evidencia@tipus | Tipus d'evidència:<br>- bdseu-peticio / bdseu-resposta: evidències de la consulta de les dades de l'usuari a la BD de la seu<br>- autenticacio-inici-peticio / autenticacio-resposta-peticio / autenticacio-peticio / autenticacio-resposta: evidències d'autenticació en base al metode emprat en l'autenticació. Vegeu l'annex d'aquest document.<br> | S |
+| identitat/document | Document identificatiu de l'usuari que realitza l'acte de signatura (p.e. NIF).<br>En cas d'autenticació amb certificat que té vinculat un CIF, aquest s'informarà en una altra ocurrència de l'element document. | S |
+| identitat/nom | Nom l'usuari que realitza l'acte de signatura. | S |
+| document/nom | Nom del document a signar tal i qual s'ha informat a la petició. | S |
+| document/resum | Resum criptogràfic del document a signar. | S |
+| document/algorisme | Algorisme usat per a calcular el resum criptogràfic | S |
+| document/metadades | Metadades informades en la petició, codificades en Base64. | N |
 
- | S |
-| identitat/evidencia | Evidències d'autenticació. Inclou tots els missatges de petició i resposta bescanviats entre el broker d'identitats i els diferents serveis d'autenticació.
- | S |
-| identitat/evidencia@dataGeneracio | Data de generació de la evidència.
- | S |
-| identitat/evidencia@tipus | Tipus d'evidència:
+| ![image](https://user-images.githubusercontent.com/32306731/137281698-9dfc2044-94f7-487f-a7d6-9a4e0707feb3.png)  L'evidència de signatura ordinària està conformada per l'agregació d'una sèrie d'evidències XML generades per cadascun dels serveis i mòduls que participen en la validació de la identitat d'un usuari en l'acte de la signatura dels documents referenciats (Base de dades de la Seu de la DGACD, servei de contrasenya al mòbil del CAOC o PSIS de CATCert, entre d'altres).<br> Algunes d'aquestes evidències no són autocontingudes -no estan signades digitalment- de manera que per tal de garantir-ne l'autenticitat i integritat, el Consorci AOC guarda traça de totes les accions realitzades en el procés de la validació de la identitat d'un usuari en un sistema de traces [certificades](#certificades) que podrà ser consultat sota demanda per part de l'organisme requeridor de la mateixa (consultes a la Base de dades de la Seu de la DGACD i crides als diferents serveis de validació d'identitats: contrasenya d'un sol ús SMS al mòbil, MobileID o validació de certificat digital contra PSIS de CATCert).
 
-- bdseu-peticio / bdseu-resposta: evidències de la consulta de les dades de l'usuari a la BD de la seu
+---
 
-
-- autenticacio-inici-peticio / autenticacio-resposta-peticio / autenticacio-peticio / autenticacio-resposta: evidències d'autenticació en base al metode emprat en l'autenticació. Vegeu l'annex d'aquest document.
+<a name="certificades"></a> El sistema de traces certificades té la particularitat que els seus registres van enllaçats amb una signatura HMAC: cada registre comença amb el hash SHA-256 del registre anterior xifrat amb una clau privada simètrica que només coneix el sistema. D'aquesta manera és impossible afegir o esborrar una traça a posteriori sense trencar la integritat interna del fitxer de traces, és a dir, es pot detectar en quina línia del fitxer de log s'ha realitzat una alteració.
+Addicionalment, cada nit s'executa un procés de consolidació que afegeix un segell de temps a tot el fitxer de traces de forma que assegurem la integritat de tot el fitxer i permet determinar amb fiabilitat la data de creació del mateix i si s’ha modificat o no des d’aleshores.
 
 
- | S |
-| identitat/document | Document identificatiu de l'usuari que realitza l'acte de signatura (p.e. NIF).
-En cas d'autenticació amb certificat que té vinculat un CIF, aquest s'informarà en una altra ocurrència de l'element document.
- | S |
-| identitat/nom
- | Nom l'usuari que realitza l'acte de signatura.
- | S |
-| document/nom | Nom del document a signar tal i qual s'ha informat a la petició.
- | S |
-| document/resum | Resum criptogràfic del document a signar.
- | S |
-| document/algorisme | Algorisme usat per a calcular el resum criptogràfic
- | S |
-| document/metadades | Metadades informades en la petició, codificades en Base64.
- | N |
+![4](Captures/4.png)
 
-| ![](RackMultipart20230131-1-aua1lp_html_e0859da4ac8c0eca.png) | L'evidència de signatura ordinària està conformada per l'agregació d'una sèrie d'evidències XML generades per cadascun dels serveis i mòduls que participen en la validació de la identitat d'un usuari en l'acte de la signatura dels documents referenciats (Base de dades de la Seu de la DGACD, servei de contrasenya al mòbil del CAOC o PSIS de CATCert, entre d'altres).
- Algunes d'aquestes evidències no són autocontingudes -no estan signades digitalment- de manera que per tal de garantir-ne l'autenticitat i integritat, el Consorci AOC guarda traça de totes les accions realitzades en el procés de la validació de la identitat d'un usuari en un sistema de traces certificades
-# 5
- que podrà ser consultat sota demanda per part de l'organisme requeridor de la mateixa (consultes a la Base de dades de la Seu de la DGACD i crides als diferents serveis de validació d'identitats: contrasenya d'un sol ús SMS al mòbil, MobileID o validació de certificat digital contra PSIS de CATCert).
- |
-| --- | --- |
-
-![](RackMultipart20230131-1-aua1lp_html_e9427b56f1a6b2d6.png)
 
 # Annex - evidències del procés de validació <a name="Annex"></a>
 
@@ -647,17 +516,71 @@ Els missatges que s'enregistren com a evidència són els missatges de petició 
 
 | _Exemple petició_ |
 | --- |
-|
-\<?xml version="1.0" encoding="UTF-8" standalone="yes"?\>\<Peticio xmlns:ns2="http://www.aoc.cat/pci/serveis-comuns/bd-seu" xmlns="http://www.aoc.cat/pci/serveis-comuns"\> \<Operacio\>BDSEU\_CONSULTAR\_DADES\</Operacio\> \<Aplicacio\>APLICACIO\</Aplicacio\> \<Organisme\>9821920002\</Organisme\> \<PeticioOperacio\> \<ns2:peticioConsultaDades\> \<ns2:dadesContacte\> \<ns2:document\>DOCUMENT\</ns2:document\> \<ns2:telefon\> \<ns2:prefix\>0034\</ns2:prefix\> \<ns2:numero\>MOBIL\</ns2:numero\> \</ns2:telefon\> \</ns2:dadesContacte\> \</ns2:peticioConsultaDades\> \</PeticioOperacio\>\</Peticio\>
- |
-| --- |
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Peticio xmlns:ns2="http://www.aoc.cat/pci/serveis-comuns/bd-seu" xmlns="http://www.aoc.cat/pci/serveis-comuns">
+	<Operacio>BDSEU_CONSULTAR_DADES</Operacio>
+	<Aplicacio>APLICACIO</Aplicacio>
+	<Organisme>9821920002</Organisme>
+	<PeticioOperacio>
+		<ns2:peticioConsultaDades>
+			<ns2:dadesContacte>
+				<ns2:document>DOCUMENT</ns2:document>
+				<ns2:telefon>
+					<ns2:prefix>0034</ns2:prefix>
+					<ns2:numero>MOBIL</ns2:numero>
+				</ns2:telefon>
+			</ns2:dadesContacte>
+		</ns2:peticioConsultaDades>
+	</PeticioOperacio>
+</Peticio>
+```
+
+
+
 
 | _Exemple resposta_ |
 | --- |
-|
-\<?xml version="1.0" encoding="UTF-8" standalone="yes"?\>\<Resposta xmlns:ns2="http://www.aoc.cat/pci/serveis-comuns/bd-seu" xmlns="http://www.aoc.cat/pci/serveis-comuns"\> \<Operacio\>BDSEU\_CONSULTAR\_DADES\</Operacio\> \<Aplicacio\>APLICACIO\</Aplicacio\> \<Timestamp\>2014-09-21T10:54:48.534+02:00\</Timestamp\> \<Organisme\>9821920002\</Organisme\> \<Estat\> \<CodiEstat\>0003\</CodiEstat\> \<LiteralError/\> \</Estat\> \<RespostaOperacio\> \<ns2:respostaConsultaDades\> \<ns2:peticioConsultaDades\> \<ns2:dadesContacte\> \<ns2:document\>DOCUMENT\</ns2:document\> \<ns2:telefon\> \<ns2:prefix\>0034\</ns2:prefix\> \<ns2:numero\>MÒBIL\</ns2:numero\> \</ns2:telefon\> \</ns2:dadesContacte\> \</ns2:peticioConsultaDades\>\<ns2:dadesUsuari\> \<ns2:nom\>NOM\</ns2:nom\> \<ns2:primerCognom\>PRIMER COGNOM\</ns2:primerCognom\> \<ns2:segonCognom\>SEGON COGNOM\</ns2:segonCognom\> \<ns2:email\>EMAIL 1\</ns2:email\> \<ns2:email\>EMAIL N\</ns2:email\>\</ns2:dadesUsuari\> \<ns2:resultat\> \<ns2:codiResultat\>01\</ns2:codiResultat\> \<ns2:descripcio\>Document d'identificació i mòbil relacionats\</ns2:descripcio\> \<ns2:evidencia\>eyJ0ZWxlZm9uIjp7InByZWZpeCI6IjAw (. . .) jAxIn0=\</ns2:evidencia\> \</ns2:resultat\> \</ns2:respostaConsultaDades\> \</RespostaOperacio\>\</Resposta\>
- |
-| --- |
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Resposta xmlns:ns2="http://www.aoc.cat/pci/serveis-comuns/bd-seu" xmlns="http://www.aoc.cat/pci/serveis-comuns">
+	<Operacio>BDSEU_CONSULTAR_DADES</Operacio>
+	<Aplicacio>APLICACIO</Aplicacio>
+	<Timestamp>2014-09-21T10:54:48.534+02:00</Timestamp>
+	<Organisme>9821920002</Organisme>
+	<Estat>
+		<CodiEstat>0003</CodiEstat>
+		<LiteralError/>
+	</Estat>
+	<RespostaOperacio>
+		<ns2:respostaConsultaDades>
+			<ns2:peticioConsultaDades>
+				<ns2:dadesContacte>
+					<ns2:document>DOCUMENT</ns2:document>
+					<ns2:telefon>
+						<ns2:prefix>0034</ns2:prefix>
+						<ns2:numero>MÒBIL</ns2:numero>
+					</ns2:telefon>
+				</ns2:dadesContacte>
+			</ns2:peticioConsultaDades>
+        <ns2:dadesUsuari>
+          	<ns2:nom>NOM</ns2:nom>
+         	<ns2:primerCognom>PRIMER COGNOM</ns2:primerCognom>
+         	<ns2:segonCognom>SEGON COGNOM</ns2:segonCognom>
+          	<ns2:email>EMAIL 1</ns2:email>
+          	<ns2:email>EMAIL N</ns2:email>
+        </ns2:dadesUsuari>
+			<ns2:resultat>
+				<ns2:codiResultat>01</ns2:codiResultat>
+				<ns2:descripcio>Document d'identificació i mòbil relacionats</ns2:descripcio>
+				<ns2:evidencia>eyJ0ZWxlZm9uIjp7InByZWZpeCI6IjAw 
+				(. . .) jAxIn0=</ns2:evidencia>
+			</ns2:resultat>
+		</ns2:respostaConsultaDades>
+	</RespostaOperacio>
+</Resposta>
+
+```
 
 ### Evidències generades en la validació amb certificat digital <a name="Evidències2"></a>
 
@@ -665,16 +588,77 @@ En cas d'autenticació amb certificat digital s'enregistra com evidència tant e
 
 | _Exemple petició_ |
 | --- |
-|
-\<?xml version="1.0" encoding="UTF-8" standalone="yes"?\>\<Peticio xmlns:ns2="http://www.aoc.cat/pci/serveis-comuns/psis" xmlns="http://www.aoc.cat/pci/serveis-comuns"\> \<Operacio\>VALIDAR\_CERTIFICAT\</Operacio\> \<Aplicacio\>APLICACIO\</Aplicacio\> \<Organisme\>9821920002\</Organisme\> \<PeticioOperacio\> \<ns2:peticioValidacioCertificat\> \<ns2:X509Certificate\>MIIIyjCCB7Kg (. . .) 3Q89ONGg==\</ns2:X509Certificate\> \<ns2:atributsDeCertificat\> \<ns2:Extension.extKeyUsage/\> \<ns2:KeyUsages/\> \<ns2:SubjectEmail/\> \<ns2:KeyOwnerNIF/\> \<ns2:SubjectName/\> \<ns2:ClassificationLevel/\> \<ns2:CertIssuerName/\> \</ns2:atributsDeCertificat\> \<ns2:recuperarEvidencia\>true\</ns2:recuperarEvidencia\> \</ns2:peticioValidacioCertificat\> \</PeticioOperacio\>\</Peticio\>
- |
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Peticio xmlns:ns2="http://www.aoc.cat/pci/serveis-comuns/psis" xmlns="http://www.aoc.cat/pci/serveis-comuns">
+	<Operacio>VALIDAR_CERTIFICAT</Operacio>
+	<Aplicacio>APLICACIO</Aplicacio>
+	<Organisme>9821920002</Organisme>
+	<PeticioOperacio>
+		<ns2:peticioValidacioCertificat>
+			<ns2:X509Certificate>MIIIyjCCB7Kg (. . .) 3Q89ONGg==</ns2:X509Certificate>
+			<ns2:atributsDeCertificat>
+				<ns2:Extension.extKeyUsage/>
+				<ns2:KeyUsages/>
+				<ns2:SubjectEmail/>
+				<ns2:KeyOwnerNIF/>
+				<ns2:SubjectName/>
+				<ns2:ClassificationLevel/>
+				<ns2:CertIssuerName/>
+			</ns2:atributsDeCertificat>
+			<ns2:recuperarEvidencia>true</ns2:recuperarEvidencia>
+		</ns2:peticioValidacioCertificat>
+	</PeticioOperacio>
+</Peticio>
+
+```
 
 | _Exemple resposta_ |
 | --- |
-|
-\<?xml version="1.0" encoding="UTF-8" standalone="yes"?\>\<Resposta xmlns:ns2="http://www.aoc.cat/pci/serveis-comuns/psis" xmlns="http://www.aoc.cat/pci/serveis-comuns"\> \<Operacio\>VALIDAR\_CERTIFICAT\</Operacio\> \<Aplicacio\>APLICACIO\</Aplicacio\> \<Timestamp\>2014-10-21T11:48:16.051+02:00\</Timestamp\> \<Organisme\>9821920002\</Organisme\> \<Estat\> \<CodiEstat\>0003\</CodiEstat\> \<LiteralError/\> \</Estat\> \<RespostaOperacio\> \<ns2:respostaValidacioCertificat\> \<ns2:resposta\> \<ns2:esValid\>true\</ns2:esValid\> \<ns2:missatgeEstat\>urn:oasis:names:tc:dss:1.0:profiles:XSS:resultminor:valid:certificate:Definitive\</ns2:missatgeEstat\> \<ns2:informacioAddicional\> \<ns2:comentari\>The signing key is inside its static validity interval.\</ns2:comentari\> \<ns2:comentari\>The issuer of the given key is trusted.\</ns2:comentari\> \<ns2:comentari\>The signing key is not revoked.\</ns2:comentari\> \</ns2:informacioAddicional\> \<ns2:atributsDeCertificat\> \<ns2:Extension.extKeyUsage/\> \<ns2:KeyUsages\>digitalSignature,nonRepudiation,keyEncipherment,dataEncipherment\</ns2:KeyUsages\> \<ns2:SubjectEmail\>EMAIL\</ns2:SubjectEmail\> \<ns2:KeyOwnerNIF\>NIF\</ns2:KeyOwnerNIF\> \<ns2:SubjectName\>SUBJECT\</ns2:SubjectName\> \<ns2:ClassificationLevel\>3\</ns2:ClassificationLevel\> \<ns2:CertIssuerName\>Agencia Catalana de Certificacio(NIF Q-0801176-I)\</ns2:CertIssuerName\> \</ns2:atributsDeCertificat\>\<ns2:evidenciaResposta\>PD94bWwgdmVyc (. . .) 25zZT4=\</ns2:evidenciaResposta\> \</ns2:resposta\> \<ns2:resultat\> \<ns2:codiResultat\>0\</ns2:codiResultat\> \<ns2:descripcio\>OK\</ns2:descripcio\> \</ns2:resultat\> \</ns2:respostaValidacioCertificat\> \</RespostaOperacio\>\</Resposta\>
- |
-| --- |
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Resposta xmlns:ns2="http://www.aoc.cat/pci/serveis-comuns/psis" xmlns="http://www.aoc.cat/pci/serveis-comuns">
+	<Operacio>VALIDAR_CERTIFICAT</Operacio>
+	<Aplicacio>APLICACIO</Aplicacio>
+	<Timestamp>2014-10-21T11:48:16.051+02:00</Timestamp>
+	<Organisme>9821920002</Organisme>
+	<Estat>
+		<CodiEstat>0003</CodiEstat>
+		<LiteralError/>
+	</Estat>
+	<RespostaOperacio>
+		<ns2:respostaValidacioCertificat>
+			<ns2:resposta>
+				<ns2:esValid>true</ns2:esValid>
+				<ns2:missatgeEstat>urn:oasis:names:tc:dss:1.0:profiles:XSS:resultminor
+               :valid:certificate:Definitive</ns2:missatgeEstat>
+				<ns2:informacioAddicional>
+					<ns2:comentari>The signing key is inside its static validity interval.</ns2:comentari>
+					<ns2:comentari>The issuer of the given key is trusted.</ns2:comentari>
+					<ns2:comentari>The signing key is not revoked.</ns2:comentari>
+				</ns2:informacioAddicional>
+				<ns2:atributsDeCertificat>
+					<ns2:Extension.extKeyUsage/>
+					<ns2:KeyUsages>digitalSignature,nonRepudiation,keyEncipherment,
+                   dataEncipherment</ns2:KeyUsages>
+					<ns2:SubjectEmail>EMAIL</ns2:SubjectEmail>
+					<ns2:KeyOwnerNIF>NIF</ns2:KeyOwnerNIF>
+					<ns2:SubjectName>SUBJECT</ns2:SubjectName>
+					<ns2:ClassificationLevel>3</ns2:ClassificationLevel>
+					<ns2:CertIssuerName>Agencia Catalana de Certificacio
+               (NIF Q-0801176-I)</ns2:CertIssuerName>
+				</ns2:atributsDeCertificat>
+				<ns2:evidenciaResposta>PD94bWwgdmVyc (. . .) 25zZT4=</ns2:evidenciaResposta>
+			</ns2:resposta>
+			<ns2:resultat>
+				<ns2:codiResultat>0</ns2:codiResultat>
+				<ns2:descripcio>OK</ns2:descripcio>
+			</ns2:resultat>
+		</ns2:respostaValidacioCertificat>
+	</RespostaOperacio>
+</Resposta>
+
+```
 
 La resposta original generada per PSIS s'incorpora a l'element //evidenciaResposta.
 
@@ -688,33 +672,122 @@ En cas de validació d'identitat amb contrasenya SMS al mòbil s'enregistren com
 
 | _Exemple petició - generació i enviament de contrasenya_ |
 | --- |
-|
-\<?xml version="1.0" encoding="UTF-8" standalone="yes"?\>\<Peticio xmlns:ns2="http://www.aoc.cat/pci/serveis-comuns/paraula-de-pas" xmlns="http://www.aoc.cat/pci/serveis-comuns"\> \<Operacio\>GENERAR\_PARAULA\</Operacio\> \<Aplicacio\>APLICACIO\</Aplicacio\> \<Organisme\>9821920002\</Organisme\> \<PeticioOperacio\> \<ns2:peticioGenerarParaulaDePas\> \<ns2:codiEns\>9821920002\</ns2:codiEns\> \<ns2:identificador\>435802ae-d120-4e93-9bd2-de6517fde197\</ns2:identificador\> \<ns2:nivell\>0\</ns2:nivell\> \<ns2:reutilitzable\>false\</ns2:reutilitzable\> \<ns2:sms\> \<ns2:telefon\>MOBIL\</ns2:telefon\> \<ns2:remitent\>APLICACIO\</ns2:remitent\> \</ns2:sms\> \<ns2:numeroIntents\>3\</ns2:numeroIntents\> \<ns2:caducitat\>10\</ns2:caducitat\> \</ns2:peticioGenerarParaulaDePas\> \</PeticioOperacio\>\</Peticio\>
- |
-| --- |
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Peticio xmlns:ns2="http://www.aoc.cat/pci/serveis-comuns/paraula-de-pas" xmlns="http://www.aoc.cat/pci/serveis-comuns">
+	<Operacio>GENERAR_PARAULA</Operacio>
+	<Aplicacio>APLICACIO</Aplicacio>
+	<Organisme>9821920002</Organisme>
+	<PeticioOperacio>
+		<ns2:peticioGenerarParaulaDePas>
+			<ns2:codiEns>9821920002</ns2:codiEns>
+			<ns2:identificador>435802ae-d120-4e93-9bd2-de6517fde197</ns2:identificador>
+			<ns2:nivell>0</ns2:nivell>
+			<ns2:reutilitzable>false</ns2:reutilitzable>
+			<ns2:sms>
+				<ns2:telefon>MOBIL</ns2:telefon>
+				<ns2:remitent>APLICACIO</ns2:remitent>
+			</ns2:sms>
+			<ns2:numeroIntents>3</ns2:numeroIntents>
+			<ns2:caducitat>10</ns2:caducitat>
+		</ns2:peticioGenerarParaulaDePas>
+	</PeticioOperacio>
+</Peticio>
+
+
+```
+
 
 | _Exemple resposta - generació i enviament de contrasenya_ |
 | --- |
-|
-\<?xml version="1.0" encoding="UTF-8" standalone="yes"?\>\<Resposta xmlns:ns2="http://www.aoc.cat/pci/serveis-comuns/paraula-de-pas" xmlns="http://www.aoc.cat/pci/serveis-comuns"\> \<Operacio\>GENERAR\_PARAULA\</Operacio\> \<Aplicacio\>APLICACIO\</Aplicacio\> \<Timestamp\>2014-10-21T12:32:09.145+02:00\</Timestamp\> \<Organisme\>9821920002\</Organisme\> \<Estat\> \<CodiEstat\>0003\</CodiEstat\> \<LiteralError/\> \</Estat\> \<RespostaOperacio\> \<ns2:respostaGenerarParaulaDePas\> \<ns2:peticioGenerarParaulaDePas\> \<ns2:codiEns\>9821920002\</ns2:codiEns\> \<ns2:identificador\>435802ae-d120-4e93-9bd2-de6517fde197\</ns2:identificador\> \<ns2:nivell\>0\</ns2:nivell\> \<ns2:reutilitzable\>false\</ns2:reutilitzable\> \<ns2:sms\> \<ns2:telefon\>MOBIL\</ns2:telefon\> \<ns2:remitent\>APLICACIO\</ns2:remitent\> \</ns2:sms\> \<ns2:numeroIntents\>3\</ns2:numeroIntents\> \<ns2:caducitat\>10\</ns2:caducitat\> \</ns2:peticioGenerarParaulaDePas\> \<ns2:resposta\> \<ns2:paraulaDePas\>787354\</ns2:paraulaDePas\> \</ns2:resposta\> \<ns2:resultat\> \<ns2:codiResultat\>0\</ns2:codiResultat\> \<ns2:descripcio/\> \</ns2:resultat\> \</ns2:respostaGenerarParaulaDePas\> \</RespostaOperacio\>\</Resposta\>
- |
-| --- |
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Resposta xmlns:ns2="http://www.aoc.cat/pci/serveis-comuns/paraula-de-pas" xmlns="http://www.aoc.cat/pci/serveis-comuns">
+	<Operacio>GENERAR_PARAULA</Operacio>
+	<Aplicacio>APLICACIO</Aplicacio>
+	<Timestamp>2014-10-21T12:32:09.145+02:00</Timestamp>
+	<Organisme>9821920002</Organisme>
+	<Estat>
+		<CodiEstat>0003</CodiEstat>
+		<LiteralError/>
+	</Estat>
+	<RespostaOperacio>
+		<ns2:respostaGenerarParaulaDePas>
+			<ns2:peticioGenerarParaulaDePas>
+				<ns2:codiEns>9821920002</ns2:codiEns>
+				<ns2:identificador>435802ae-d120-4e93-9bd2-de6517fde197</ns2:identificador>
+				<ns2:nivell>0</ns2:nivell>
+				<ns2:reutilitzable>false</ns2:reutilitzable>
+				<ns2:sms>
+					<ns2:telefon>MOBIL</ns2:telefon>
+					<ns2:remitent>APLICACIO</ns2:remitent>
+				</ns2:sms>
+				<ns2:numeroIntents>3</ns2:numeroIntents>
+				<ns2:caducitat>10</ns2:caducitat>
+			</ns2:peticioGenerarParaulaDePas>
+			<ns2:resposta>
+				<ns2:paraulaDePas>787354</ns2:paraulaDePas>
+			</ns2:resposta>
+			<ns2:resultat>
+				<ns2:codiResultat>0</ns2:codiResultat>
+				<ns2:descripcio/>
+			</ns2:resultat>
+		</ns2:respostaGenerarParaulaDePas>
+	</RespostaOperacio>
+</Resposta>
+
+```
 
 Un cop l'usuari ha introduït la contrasenya es generen les evidències de validació.
 
 | _Exemple petició - validació de contrasenya_ |
 | --- |
-|
-\<?xml version="1.0" encoding="UTF-8" standalone="yes"?\>\<Peticio xmlns:ns2="http://www.aoc.cat/pci/serveis-comuns/paraula-de-pas" xmlns="http://www.aoc.cat/pci/serveis-comuns"\> \<Operacio\>VALIDAR\_PARAULA\</Operacio\> \<Aplicacio\>APLICACIO\</Aplicacio\> \<Organisme\>9821920002\</Organisme\> \<PeticioOperacio\> \<ns2:peticioValidarParaulaDePas\> \<ns2:identificador\>435802ae-d120-4e93-9bd2-de6517fde197\</ns2:identificador\> \<ns2:paraulaDePas\>787354\</ns2:paraulaDePas\> \<ns2:sensibleMajuscules\>false\</ns2:sensibleMajuscules\> \</ns2:peticioValidarParaulaDePas\> \</PeticioOperacio\>\</Peticio\>
- |
-| --- |
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Peticio xmlns:ns2="http://www.aoc.cat/pci/serveis-comuns/paraula-de-pas" xmlns="http://www.aoc.cat/pci/serveis-comuns">
+	<Operacio>VALIDAR_PARAULA</Operacio>
+	<Aplicacio>APLICACIO</Aplicacio>
+	<Organisme>9821920002</Organisme>
+	<PeticioOperacio>
+		<ns2:peticioValidarParaulaDePas>
+			<ns2:identificador>435802ae-d120-4e93-9bd2-de6517fde197</ns2:identificador>
+			<ns2:paraulaDePas>787354</ns2:paraulaDePas>
+			<ns2:sensibleMajuscules>false</ns2:sensibleMajuscules>
+		</ns2:peticioValidarParaulaDePas>
+	</PeticioOperacio>
+</Peticio>
+
+```
 
 | _Exemple resposta - validació de contrasenya_ |
 | --- |
-|
-\<?xml version="1.0" encoding="UTF-8" standalone="yes"?\>\<Resposta xmlns:ns2="http://www.aoc.cat/pci/serveis-comuns/paraula-de-pas" xmlns="http://www.aoc.cat/pci/serveis-comuns"\> \<Operacio\>VALIDAR\_PARAULA\</Operacio\> \<Aplicacio\>APLICACIO\</Aplicacio\> \<Timestamp\>2014-10-21T12:32:29.810+02:00\</Timestamp\> \<Organisme\>9821920002\</Organisme\> \<Estat\> \<CodiEstat\>0003\</CodiEstat\> \<LiteralError/\> \</Estat\> \<RespostaOperacio\> \<ns2:respostaValidarParaulaDePas\> \<ns2:peticioValidarParaulaDePas\> \<ns2:identificador\>435802ae-d120-4e93-9bd2-de6517fde197\</ns2:identificador\> \<ns2:paraulaDePas\>787354\</ns2:paraulaDePas\> \<ns2:sensibleMajuscules\>false\</ns2:sensibleMajuscules\> \</ns2:peticioValidarParaulaDePas\> \<ns2:resultat\> \<ns2:codiResultat\>0\</ns2:codiResultat\> \<ns2:descripcio/\> \</ns2:resultat\> \</ns2:respostaValidarParaulaDePas\> \</RespostaOperacio\>\</Resposta\>
- |
-| --- |
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Resposta xmlns:ns2="http://www.aoc.cat/pci/serveis-comuns/paraula-de-pas" xmlns="http://www.aoc.cat/pci/serveis-comuns">
+	<Operacio>VALIDAR_PARAULA</Operacio>
+	<Aplicacio>APLICACIO</Aplicacio>
+	<Timestamp>2014-10-21T12:32:29.810+02:00</Timestamp>
+	<Organisme>9821920002</Organisme>
+	<Estat>
+		<CodiEstat>0003</CodiEstat>
+		<LiteralError/>
+	</Estat>
+	<RespostaOperacio>
+		<ns2:respostaValidarParaulaDePas>
+			<ns2:peticioValidarParaulaDePas>
+				<ns2:identificador>435802ae-d120-4e93-9bd2-de6517fde197</ns2:identificador>
+				<ns2:paraulaDePas>787354</ns2:paraulaDePas>
+				<ns2:sensibleMajuscules>false</ns2:sensibleMajuscules>
+			</ns2:peticioValidarParaulaDePas>
+			<ns2:resultat>
+				<ns2:codiResultat>0</ns2:codiResultat>
+				<ns2:descripcio/>
+			</ns2:resultat>
+		</ns2:respostaValidarParaulaDePas>
+	</RespostaOperacio>
+</Resposta>
+
+```
 
 ### Evidències generades en la validació amb MobileID <a name="Evidències4"></a>
 
@@ -722,24 +795,43 @@ En cas de validació d'identitat amb MobileID s'enregistren com evidència tant 
 
 | _Exemple petició – inici d'autenticació_ |
 | --- |
-|
-{tipusDocument='1', document='DOCUMENT', nivell='1', aplicacio='APLICACIO', origen='1', edatMinima='21'}
- |
-| --- |
+|{tipusDocument='1', document='DOCUMENT', nivell='1', aplicacio='APLICACIO', origen='1', edatMinima='21'} |
+
 
 | _Exemple petició – consulta d'estat d'autenticació_ |
 | --- |
-|
-{token='1ZK2aFjB'}
- |
-| --- |
+|{token='1ZK2aFjB'} |
+
 
 | _Exemple resposta – resultat d'autenticació_ |
 | --- |
-|
-\<?xml version="1.0" encoding="UTF-8" standalone="yes"?\>\<ns2:userMobileDTO xmlns:ns2="http://idbcn.bcn.cat"\> \<alias/\> \<birthday\>YYYY-MM-DD\</birthday\> \<countryNac\>-1\</countryNac\> \<countryRes\>-1\</countryRes\> \<descripction\>OK\</descripction\> \<email\>EMAIL\</email\> \<email2\>EMAIL\</email2\> \<emitterDocIdent\>ES\</emitterDocIdent\> \<error\>0\</error\> \<expirationDate\>2024-10-21\</expirationDate\> \<identDocType\>1\</identDocType\> \<identificationMode\>WEB\</identificationMode\> \<identificationNumber\>NIF\</identificationNumber\> \<mobileNumber\>MOBIL\</mobileNumber\> \<name\>NOM\</name\> \<photo/\> \<reciveInfo\>1\</reciveInfo\> \<status\>2\</status\> \<surname1\>COGNOM\</surname1\> \<surname2/\> \<urlXmlSign\>http://viafirmapre.firmaprofesional.com/premobileid/v/A5OF-A2J0-1413-9757-7439-9\</urlXmlSign\>\</ns2:userMobileDTO\>
- |
-| --- |
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:userMobileDTO xmlns:ns2="http://idbcn.bcn.cat">
+	<alias/>
+	<birthday>YYYY-MM-DD</birthday>
+	<countryNac>-1</countryNac>
+	<countryRes>-1</countryRes>
+	<descripction>OK</descripction>
+	<email>EMAIL</email>
+	<email2>EMAIL</email2>
+	<emitterDocIdent>ES</emitterDocIdent>
+	<error>0</error>
+	<expirationDate>2024-10-21</expirationDate>
+	<identDocType>1</identDocType>
+	<identificationMode>WEB</identificationMode>
+	<identificationNumber>NIF</identificationNumber>
+	<mobileNumber>MOBIL</mobileNumber>
+	<name>NOM</name>
+	<photo/>
+	<reciveInfo>1</reciveInfo>
+	<status>2</status>
+	<surname1>COGNOM</surname1>
+	<surname2/>
+	<urlXmlSign>http://viafirmapre.firmaprofesional.com/premobileid/v/A5OF-A2J0-1413-9757-7439-9</urlXmlSign>
+</ns2:userMobileDTO>
+
+```
 
 ### Evidències generades en la validació amb Cl@ve <a name="Evidències5"></a>
 
@@ -747,22 +839,200 @@ En cas de validació d'identitat amb el sistema Cl@ve s'enregistren com evidènc
 
 | _Exemple petició – inici d'autenticació (tiquet SAML generat per VALId)_ |
 | --- |
-|
-\<?xml version="1.0" encoding="UTF-8"?\>\<saml2p:AuthnRequest xmlns:saml2p="urn:oasis:names:tc:SAML:2.0:protocol"xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"xmlns:stork="urn:eu:stork:names:tc:STORK:1.0:assertion" xmlns:storkp="urn:eu:stork:names:tc:STORK:1.0:protocol"AssertionConsumerServiceURL="https://accounts-dev.aoc.cat/o/oauth2/auth"Consent="urn:oasis:names:tc:SAML:2.0:consent:unspecified" ForceAuthn="true" ID="\_a5f059d8088e7d4ac0c2f987e81bbc37"IsPassive="false" IssueInstant="2015-07-07T11:38:06.290Z" ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"ProviderName="DEMO-SP" Version="2.0"\> \<saml2:Issuer Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity"\>http://S-PEPS.gov.xx\</saml2:Issuer\> \<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#"\> \<ds:SignedInfo\> \<ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/\> \<ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/\> \<ds:Reference URI="#\_a5f059d8088e7d4ac0c2f987e81bbc37"\> \<ds:Transforms\> \<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/\> \<ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/\> \</ds:Transforms\> \<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/\> \<ds:DigestValue\>G/i0BVuAPRgxRQXEKlty5q76G04=\</ds:DigestValue\> \</ds:Reference\> \</ds:SignedInfo\> \<ds:SignatureValue\>WCJ2v2OQz/MvJSfkV84Hs/h (...) JOBdD/0e6fKrSLw==\</ds:SignatureValue\> \<ds:KeyInfo\> \<ds:X509Data\> \<ds:X509Certificate\>MIIDezCCAmMC(...)Fd0ug==\</ds:X509Certificate\> \</ds:X509Data\> \</ds:KeyInfo\> \</ds:Signature\> \<saml2p:Extensions\> \<stork:QualityAuthenticationAssuranceLevel\>3\</stork:QualityAuthenticationAssuranceLevel\> \<stork:spSector\>DEMO-SP\</stork:spSector\> \<stork:spInstitution\>DEMO-SP\</stork:spInstitution\> \<stork:spApplication\>DEMO-SP\</stork:spApplication\> \<storkp:eIDSectorShare\>true\</storkp:eIDSectorShare\> \<storkp:eIDCrossSectorShare\>true\</storkp:eIDCrossSectorShare\> \<storkp:eIDCrossBorderShare\>true\</storkp:eIDCrossBorderShare\> \<storkp:RequestedAttributes\> \<stork:RequestedAttribute Name="http://www.stork.gov.eu/1.0/eIdentifier" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="true"/\> \<stork:RequestedAttribute Name="http://www.stork.gov.eu/1.0/givenName" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="true"/\> \<stork:RequestedAttribute Name="http://www.stork.gov.eu/1.0/dateOfBirth" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="false"/\> \<stork:RequestedAttribute Name="http://www.stork.gov.eu/1.0/eMail" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="false"/\> \<stork:RequestedAttribute Name="http://www.stork.gov.eu/1.0/citizenQAALevel" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="false"/\> \<stork:RequestedAttribute Name="http://www.stork.gov.eu/1.0/fiscalNumber" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="false"/\> \<stork:RequestedAttribute Name="http://www.stork.gov.eu/1.0/nationalityCode" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="false"/\> \<stork:RequestedAttribute Name="http://www.stork.gov.eu/1.0/surname" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="true"/\> \<stork:RequestedAttribute Name="http://www.stork.gov.eu/1.0/canonicalResidenceAddress" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="false"/\> \</storkp:RequestedAttributes\> \<storkp:AuthenticationAttributes\> \<storkp:VIDPAuthenticationAttributes\> \<storkp:SPInformation\> \<storkp:SPID\>DEMO-SP\</storkp:SPID\> \</storkp:SPInformation\> \</storkp:VIDPAuthenticationAttributes\> \</storkp:AuthenticationAttributes\> \</saml2p:Extensions\>\</saml2p:AuthnRequest\>
- |
-| --- |
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<saml2p:AuthnRequest xmlns:saml2p="urn:oasis:names:tc:SAML:2.0:protocol"
+xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+xmlns:stork="urn:eu:stork:names:tc:STORK:1.0:assertion" xmlns:storkp="urn:eu:stork:names:tc:STORK:1.0:protocol"
+AssertionConsumerServiceURL="https://accounts-dev.aoc.cat/o/oauth2/auth"
+Consent="urn:oasis:names:tc:SAML:2.0:consent:unspecified" ForceAuthn="true" ID="_a5f059d8088e7d4ac0c2f987e81bbc37"
+IsPassive="false" IssueInstant="2015-07-07T11:38:06.290Z" ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+ProviderName="DEMO-SP" Version="2.0">
+	<saml2:Issuer Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity">http://S-PEPS.gov.xx</saml2:Issuer>
+	<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+		<ds:SignedInfo>
+			<ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+			<ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+			<ds:Reference URI="#_a5f059d8088e7d4ac0c2f987e81bbc37">
+				<ds:Transforms>
+					<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+					<ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+				</ds:Transforms>
+				<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+				<ds:DigestValue>G/i0BVuAPRgxRQXEKlty5q76G04=</ds:DigestValue>
+			</ds:Reference>
+		</ds:SignedInfo>
+		<ds:SignatureValue>WCJ2v2OQz/MvJSfkV84Hs/h (...) JOBdD/0e6fKrSLw==</ds:SignatureValue>
+		<ds:KeyInfo>
+			<ds:X509Data>
+				<ds:X509Certificate>MIIDezCCAmMC(...)Fd0ug==</ds:X509Certificate>
+			</ds:X509Data>
+		</ds:KeyInfo>
+	</ds:Signature>
+	<saml2p:Extensions>
+		<stork:QualityAuthenticationAssuranceLevel>3</stork:QualityAuthenticationAssuranceLevel>
+		<stork:spSector>DEMO-SP</stork:spSector>
+		<stork:spInstitution>DEMO-SP</stork:spInstitution>
+		<stork:spApplication>DEMO-SP</stork:spApplication>
+		<storkp:eIDSectorShare>true</storkp:eIDSectorShare>
+		<storkp:eIDCrossSectorShare>true</storkp:eIDCrossSectorShare>
+		<storkp:eIDCrossBorderShare>true</storkp:eIDCrossBorderShare>
+		<storkp:RequestedAttributes>
+			<stork:RequestedAttribute Name="http://www.stork.gov.eu/1.0/eIdentifier"
+			NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="true"/>
+			<stork:RequestedAttribute Name="http://www.stork.gov.eu/1.0/givenName"
+			NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="true"/>
+			<stork:RequestedAttribute Name="http://www.stork.gov.eu/1.0/dateOfBirth"
+			NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="false"/>
+			<stork:RequestedAttribute Name="http://www.stork.gov.eu/1.0/eMail"
+			NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="false"/>
+			<stork:RequestedAttribute Name="http://www.stork.gov.eu/1.0/citizenQAALevel"
+			NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="false"/>
+			<stork:RequestedAttribute Name="http://www.stork.gov.eu/1.0/fiscalNumber"
+			NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="false"/>
+			<stork:RequestedAttribute Name="http://www.stork.gov.eu/1.0/nationalityCode"
+			NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="false"/>
+			<stork:RequestedAttribute Name="http://www.stork.gov.eu/1.0/surname"
+			NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="true"/>
+			<stork:RequestedAttribute Name="http://www.stork.gov.eu/1.0/canonicalResidenceAddress"
+			NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="false"/>
+		</storkp:RequestedAttributes>
+		<storkp:AuthenticationAttributes>
+			<storkp:VIDPAuthenticationAttributes>
+				<storkp:SPInformation>
+					<storkp:SPID>DEMO-SP</storkp:SPID>
+				</storkp:SPInformation>
+			</storkp:VIDPAuthenticationAttributes>
+		</storkp:AuthenticationAttributes>
+	</saml2p:Extensions>
+</saml2p:AuthnRequest>
+
+```
 
 | _Exemple resposta – resultat d'autenticació (tiquet SAML generat per Cl@ve)_ |
 | --- |
-|
-\<?xml version="1.0" encoding="UTF-8"?\>\<saml2p:Response xmlns:saml2p="urn:oasis:names:tc:SAML:2.0:protocol"xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"xmlns:stork="urn:eu:stork:names:tc:STORK:1.0:assertion"xmlns:storkp="urn:eu:stork:names:tc:STORK:1.0:protocol" xmlns:xs="http://www.w3.org/2001/XMLSchema"Consent="urn:oasis:names:tc:SAML:2.0:consent:obtained"Destination="https://accounts-dev.aoc.cat/o/oauth2/auth"ID="\_e6f0344f0780971784c8f8129b05241e" InResponseTo="\_a5f059d8088e7d4ac0c2f987e81bbc37"IssueInstant="2015-07-07T11:39:12.495Z" Version="2.0"\> \<saml2:Issuer Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity"\>PIN24H\</saml2:Issuer\> \<ds:Signature\> \<ds:SignedInfo\> \<ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/\> \<ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/\> \<ds:Reference URI="#\_e6f0344f0780971784c8f8129b05241e"\> \<ds:Transforms\> \<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/\> \<ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"\> \<ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="xs"/\> \</ds:Transform\> \</ds:Transforms\> \<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/\> \<ds:DigestValue\>jHyaPRRoamBRcX4VDNNRemqrG2g=\</ds:DigestValue\> \</ds:Reference\> \</ds:SignedInfo\> \<ds:SignatureValue\>LJjhjYxl4dDH0WRBAT(...)0M/ITwPs=\</ds:SignatureValue\> \<ds:KeyInfo\> \<ds:X509Data\> \<ds:X509Certificate\>MIIEHTCCA(...)rJ6Xw==\</ds:X509Certificate\> \</ds:X509Data\> \</ds:KeyInfo\> \</ds:Signature\> \<saml2p:Status\> \<saml2p:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success"/\> \<saml2p:StatusMessage\>urn:oasis:names:tc:SAML:2.0:status:Success\</saml2p:StatusMessage\> \</saml2p:Status\> \<saml2:Assertion ID="\_5654123081c8637a7790e0adf32e89c0" IssueInstant="2015-07-07T11:39:12.496Z" Version="2.0"\> \<saml2:Issuer Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity"\>PIN24H\</saml2:Issuer\> \<ds:Signature\> \<ds:SignedInfo\> \<ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/\> \<ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/\> \<ds:Reference URI="#\_5654123081c8637a7790e0adf32e89c0"\> \<ds:Transforms\> \<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/\> \<ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"\> \<ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="xs"/\> \</ds:Transform\> \</ds:Transforms\> \<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/\> \<ds:DigestValue\>BBz+aqijg244tgP48tBA95ap5i4=\</ds:DigestValue\> \</ds:Reference\> \</ds:SignedInfo\> \<ds:SignatureValue\>o7+az5hWA(...)ZcM+tlipr8=\</ds:SignatureValue\> \<ds:KeyInfo\> \<ds:X509Data\> \<ds:X509Certificate\>MIIEHTCC(...)IMrJ6Xw==\</ds:X509Certificate\> \</ds:X509Data\> \</ds:KeyInfo\> \</ds:Signature\> \<saml2:Subject\> \<saml2:NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"NameQualifier="http://C-PEPS.gov.xx"\>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified\</saml2:NameID\> \<saml2:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer"\> \<saml2:SubjectConfirmationData Address="https://accounts-dev.aoc.cat/o/oauth2/auth" InResponseTo="\_a5f059d8088e7d4ac0c2f987e81bbc37" NotOnOrAfter="2015-07-07T11:44:12.496Z" Recipient="https://accounts-dev.aoc.cat/o/oauth2/auth"/\> \</saml2:SubjectConfirmation\> \</saml2:Subject\> \<saml2:Conditions NotBefore="2015-07-07T11:39:12.496Z" NotOnOrAfter="2015-07-07T11:44:12.496Z"\> \<saml2:AudienceRestriction\> \<saml2:Audience\>http://S-PEPS.gov.xx\</saml2:Audience\> \</saml2:AudienceRestriction\> \<saml2:OneTimeUse/\> \</saml2:Conditions\> \<saml2:AuthnStatement AuthnInstant="2015-07-07T11:39:12.496Z"\> \<saml2:SubjectLocality Address="https://accounts-dev.aoc.cat/o/oauth2/auth"/\> \<saml2:AuthnContext\> \<saml2:AuthnContextDecl/\> \</saml2:AuthnContext\> \</saml2:AuthnStatement\> \<saml2:AttributeStatement\> \<saml2:Attribute Name="http://www.stork.gov.eu/1.0/eIdentifier" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"\> \<saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:anyType"\>ES/ES/DNI\</saml2:AttributeValue\> \</saml2:Attribute\> \<saml2:Attribute Name="http://www.stork.gov.eu/1.0/givenName" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"\> \<saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:anyType"\>ROGER\</saml2:AttributeValue\> \</saml2:Attribute\> \<saml2:Attribute Name="http://www.stork.gov.eu/1.0/dateOfBirth" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"/\> \<saml2:Attribute Name="http://www.stork.gov.eu/1.0/eMail" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"\> \<saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:anyType"\>email@aoc.cat\</saml2:AttributeValue\> \</saml2:Attribute\> \<saml2:Attribute Name="http://www.stork.gov.eu/1.0/citizenQAALevel" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"\> \<saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:anyType"\>03\</saml2:AttributeValue\> \</saml2:Attribute\> \<saml2:Attribute Name="http://www.stork.gov.eu/1.0/fiscalNumber" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"/\> \<saml2:Attribute Name="http://www.stork.gov.eu/1.0/nationalityCode" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"/\> \<saml2:Attribute Name="http://www.stork.gov.eu/1.0/surname" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"\> \<saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:anyType"\>NOGUERA ARNAU\</saml2:AttributeValue\> \</saml2:Attribute\> \<saml2:Attribute Name="http://www.stork.gov.eu/1.0/canonicalResidenceAddress" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"/\> \</saml2:AttributeStatement\> \</saml2:Assertion\>\</saml2p:Response\>
- |
-| --- |
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<saml2p:Response xmlns:saml2p="urn:oasis:names:tc:SAML:2.0:protocol"
+xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+xmlns:stork="urn:eu:stork:names:tc:STORK:1.0:assertion"
+xmlns:storkp="urn:eu:stork:names:tc:STORK:1.0:protocol" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+Consent="urn:oasis:names:tc:SAML:2.0:consent:obtained"
+Destination="https://accounts-dev.aoc.cat/o/oauth2/auth"
+ID="_e6f0344f0780971784c8f8129b05241e" InResponseTo="_a5f059d8088e7d4ac0c2f987e81bbc37"
+IssueInstant="2015-07-07T11:39:12.495Z" Version="2.0">
+	<saml2:Issuer Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity">PIN24H</saml2:Issuer>
+	<ds:Signature>
+		<ds:SignedInfo>
+			<ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+			<ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+			<ds:Reference URI="#_e6f0344f0780971784c8f8129b05241e">
+				<ds:Transforms>
+					<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+					<ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+						<ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#"
+						PrefixList="xs"/>
+					</ds:Transform>
+				</ds:Transforms>
+				<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+				<ds:DigestValue>jHyaPRRoamBRcX4VDNNRemqrG2g=</ds:DigestValue>
+			</ds:Reference>
+		</ds:SignedInfo>
+		<ds:SignatureValue>LJjhjYxl4dDH0WRBAT(...)0M/ITwPs=</ds:SignatureValue>
+		<ds:KeyInfo>
+			<ds:X509Data>
+				<ds:X509Certificate>MIIEHTCCA(...)rJ6Xw==</ds:X509Certificate>
+			</ds:X509Data>
+		</ds:KeyInfo>
+	</ds:Signature>
+	<saml2p:Status>
+		<saml2p:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success"/>
+		<saml2p:StatusMessage>urn:oasis:names:tc:SAML:2.0:status:Success</saml2p:StatusMessage>
+	</saml2p:Status>
+	<saml2:Assertion ID="_5654123081c8637a7790e0adf32e89c0" IssueInstant="2015-07-07T11:39:12.496Z"
+	Version="2.0">
+		<saml2:Issuer Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity">PIN24H</saml2:Issuer>
+		<ds:Signature>
+			<ds:SignedInfo>
+				<ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+				<ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+				<ds:Reference URI="#_5654123081c8637a7790e0adf32e89c0">
+					<ds:Transforms>
+						<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+						<ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+							<ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#"
+							PrefixList="xs"/>
+						</ds:Transform>
+					</ds:Transforms>
+					<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+					<ds:DigestValue>BBz+aqijg244tgP48tBA95ap5i4=</ds:DigestValue>
+				</ds:Reference>
+			</ds:SignedInfo>
+			<ds:SignatureValue>o7+az5hWA(...)ZcM+tlipr8=</ds:SignatureValue>
+			<ds:KeyInfo>
+				<ds:X509Data>
+					<ds:X509Certificate>MIIEHTCC(...)IMrJ6Xw==</ds:X509Certificate>
+				</ds:X509Data>
+			</ds:KeyInfo>
+		</ds:Signature>
+		<saml2:Subject>
+			<saml2:NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
+          NameQualifier="http://C-PEPS.gov.xx">
+          urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</saml2:NameID>
+			<saml2:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">
+				<saml2:SubjectConfirmationData Address="https://accounts-dev.aoc.cat/o/oauth2/auth"
+				InResponseTo="_a5f059d8088e7d4ac0c2f987e81bbc37" NotOnOrAfter="2015-07-07T11:44:12.496Z"
+				Recipient="https://accounts-dev.aoc.cat/o/oauth2/auth"/>
+			</saml2:SubjectConfirmation>
+		</saml2:Subject>
+		<saml2:Conditions NotBefore="2015-07-07T11:39:12.496Z" NotOnOrAfter="2015-07-07T11:44:12.496Z">
+			<saml2:AudienceRestriction>
+				<saml2:Audience>http://S-PEPS.gov.xx</saml2:Audience>
+			</saml2:AudienceRestriction>
+			<saml2:OneTimeUse/>
+		</saml2:Conditions>
+		<saml2:AuthnStatement AuthnInstant="2015-07-07T11:39:12.496Z">
+			<saml2:SubjectLocality Address="https://accounts-dev.aoc.cat/o/oauth2/auth"/>
+			<saml2:AuthnContext>
+				<saml2:AuthnContextDecl/>
+			</saml2:AuthnContext>
+		</saml2:AuthnStatement>
+		<saml2:AttributeStatement>
+			<saml2:Attribute Name="http://www.stork.gov.eu/1.0/eIdentifier"
+			NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+				<saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:type="xs:anyType">ES/ES/DNI</saml2:AttributeValue>
+			</saml2:Attribute>
+			<saml2:Attribute Name="http://www.stork.gov.eu/1.0/givenName"
+			NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+				<saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:type="xs:anyType">ROGER</saml2:AttributeValue>
+			</saml2:Attribute>
+			<saml2:Attribute Name="http://www.stork.gov.eu/1.0/dateOfBirth"
+			NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"/>
+			<saml2:Attribute Name="http://www.stork.gov.eu/1.0/eMail"
+			NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+				<saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:type="xs:anyType">email@aoc.cat</saml2:AttributeValue>
+			</saml2:Attribute>
+			<saml2:Attribute Name="http://www.stork.gov.eu/1.0/citizenQAALevel"
+			NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+				<saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:type="xs:anyType">03</saml2:AttributeValue>
+			</saml2:Attribute>
+			<saml2:Attribute Name="http://www.stork.gov.eu/1.0/fiscalNumber"
+			NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"/>
+			<saml2:Attribute Name="http://www.stork.gov.eu/1.0/nationalityCode"
+			NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"/>
+			<saml2:Attribute Name="http://www.stork.gov.eu/1.0/surname"
+			NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+				<saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:type="xs:anyType">NOGUERA ARNAU</saml2:AttributeValue>
+			</saml2:Attribute>
+			<saml2:Attribute Name="http://www.stork.gov.eu/1.0/canonicalResidenceAddress"
+			NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"/>
+		</saml2:AttributeStatement>
+	</saml2:Assertion>
+</saml2p:Response>
 
-
-
-[4](#sdfootnote4anc)[https://www.w3.org/TR/xmlsec-algorithms/](https://www.w3.org/TR/xmlsec-algorithms/)
-
-[5](#sdfootnote5anc) El sistema de traces certificades té la particularitat que els seus registres van enllaçats amb una signatura HMAC: cada registre comença amb el hash SHA-256 del registre anterior xifrat amb una clau privada simètrica que només coneix el sistema. D'aquesta manera és impossible afegir o esborrar una traça a posteriori sense trencar la integritat interna del fitxer de traces, és a dir, es pot detectar en quina línia del fitxer de log s'ha realitzat una alteració.
-
-Addicionalment, cada nit s'executa un procés de consolidació que afegeix un segell de temps a tot el fitxer de traces de forma que assegurem la integritat de tot el fitxer i permet determinar amb fiabilitat la data de creació del mateix i si s'ha modificat o no des d'aleshores.
+```
