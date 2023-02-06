@@ -2,32 +2,6 @@
 
 ## **DI – VALId (Validador d'identitats)**
 
-Realitzat per: Àrea de Tecnologia - Projectes
-
-**Control del document**
-
-**Informació general**
-
-| **Títol:** | DI - VALId |
-| --- | --- |
-| **Creat per:** | Àrea de Tecnologia - Projectes |
-| **A revisar per:** | Àrea de Tecnologia - Suport |
-| **A aprovar per:** | Àrea de Tecnologia - Suport |
-| **Llista de distribució:** |
- 
-
-**Històric de revisions**
-
-| **Versió** | **Data** | **Autor** | **Comentaris** |
-| --- | --- | --- | --- |
-| V1.0 | 08/10/2014 | Òscar Trapote | Creació del document. |
-| V1.1 | 01/07/2015 | Roger Noguera i Arnau | Validació Cl@ve. |
-| V2.0 | 21/09/2015 | Roger Noguera i ArnauDaniel Martínez | Signatura ordinària amb acció d'autenticació addicional per part de l'usuari, countryCode en dades d'usuari i detall de les evidències generades en un procés d'autenticació.Consideracions sobre l'ús d'algorismes de hash. |
-| V2.1 | 07/03/2016 | Roger Noguera i Arnau | Signatura ordinària incorpora nom de l'usuari.Servei userInfo retorna els cognoms per separat si el validador d'identitat proporciona aquesta informació i el mètode emprat en l'autenticació. |
-| V2.2 | 09/08/2016 | Carlos Mena Fernández | S'afegeix la generació de l'access token via refresh token. |
-| V2.3 | 10/04/2017 | Roger Noguera i Arnau | Nous atributs a userInfo: nous tipus de document identificador i identificador d'empresa.Signatura ordinària: rebut PDF i s'incorpora identificador d'empresa en XML de signatura ordinària. |
-| V2.4 | 19/03/2018 | Roger Noguera i Arnau | Nous atributs a userInfo: nom d'empresa (companyName), nivell de seguretat (assuranceLevel) i tipus de certificat (certificateType). |
-
 **Índex**
 
 - [1 Introducció 1](#1)
