@@ -170,17 +170,16 @@ La negociació del _token_ d'accés es realitza mitjançant una crida POST entre
 | grant_type | Per especificació OAuth 2.0, el valor d'aquest camp sempre serà authorization_code. |
 
 Un exemple de petició POST seria similar a el que es mostra a continuació:
-```json
-   POST /o/oauth2/token HTTP/1.1
-   Host: accounts-dev.aoc.cat
-   Content-Type: application/x-www-form-urlencoded
-   
-   code=1/j23a71vICLQm6bTrtp7&
-   client_id=0123456789.serveis.aoc.cat&
-   client_secret=...............&
-   redirect_uri=https://enotum.aoc.cat/code&
-   grant_type=authorization_code
+```
+POST /o/oauth2/token HTTP/1.1
+Host: accounts-dev.aoc.cat
+Content-Type: application/x-www-form-urlencoded
 
+code=1/j23a71vICLQm6bTrtp7&
+client_id=0123456789.serveis.aoc.cat&
+client_secret=...............&
+redirect_uri=https://enotum.aoc.cat/code&
+grant_type=authorization_code
 ```
 
 La resposta a aquesta crida conté els següents camps:
@@ -193,12 +192,12 @@ La resposta a aquesta crida conté els següents camps:
 | token_type | Tipus de token generat. Actualment aquest camp sempre tindrà el valor Bearer. |
 
 La resposta a la crida vindrà donada amb representació JSON.
-``` json
+```json
 {
-     "access_token":"1/g073bzAr24Fz3Z1e44g73v",
-     "expires_in":3600,
-     "token_type":"Bearer"
-   }
+    "access_token":"1/g073bzAr24Fz3Z1e44g73v",
+    "expires_in":3600,
+    "token_type":"Bearer"
+}
 ```
 
 ### 2.2.1 Generació d'un nou accés token a partir del refresh Token. <a name="2.2.1"></a>
@@ -207,12 +206,11 @@ Si en la petició d'autenticació inicial s'especifica el valor offline al parà
 
 ```json
 {
-     "access_token":"1/g073bzAr24Fz3Z1e44g73v",
-     "refresh_token":"zZ5c9nbFmaEQJbFaHknXQe4SjyYWwAu1qiw7Ic9_",
-     "expires_in":3600,
-     "token_type":"Bearer"
-   }
-
+    "access_token":"1/g073bzAr24Fz3Z1e44g73v",
+    "refresh_token":"zZ5c9nbFmaEQJbFaHknXQe4SjyYWwAu1qiw7Ic9_",
+    "expires_in":3600,
+    "token_type":"Bearer"
+}
 ```
 
 A partir d'aquest moment, es podran demanar nous tokens a partir de la URL que s'usa per negociar el _token_ d'accés:
@@ -221,28 +219,27 @@ https://identitats-pre.aoc.cat/o/oauth2/token
 ```
 
 A diferència del cas anterior, caldrà especificar el valor refresh_token al paràmetre grant_type i en comptes d'enviar el paràmetre code, caldrà enviar el paràmetre refresh_token amb el valor de la resposta anterior. Per exemple:
-```json
-   POST /o/oauth2/token HTTP/1.1
-   Host: accounts-dev.aoc.cat
-   Content-Type: application/x-www-form-urlencoded
-   
-   refresh_token=zZ5c9nbFmaEQJbFaHknXQe4SjyYWwAu1qiw7Ic9_
-   client_id=0123456789.serveis.aoc.cat&
-   client_secret=...............&
-   redirect_uri=https://enotum.aoc.cat/code&
-   grant_type=refresh_token
+```
+POST /o/oauth2/token HTTP/1.1
+Host: accounts-dev.aoc.cat
+Content-Type: application/x-www-form-urlencoded
+
+refresh_token=zZ5c9nbFmaEQJbFaHknXQe4SjyYWwAu1qiw7Ic9_
+client_id=0123456789.serveis.aoc.cat&
+client_secret=...............&
+redirect_uri=https://enotum.aoc.cat/code&
+grant_type=refresh_token
 ```
 
 La resposta a aquesta crida contindria el nou accés token generat:
 
-```
-   {
-     "access_token":"1/eZU0_DyEUjETrw9B0VIWZvSympnrm-vnKdVzC1xF",
-     "refresh_token":"zZ5c9nbFmaEQJbFaHknXQe4SjyYWwAu1qiw7Ic9_",
-     "expires_in":3600,
-     "token_type":"Bearer"
-   }
-
+```json
+{
+    "access_token":"1/eZU0_DyEUjETrw9B0VIWZvSympnrm-vnKdVzC1xF",
+    "refresh_token":"zZ5c9nbFmaEQJbFaHknXQe4SjyYWwAu1qiw7Ic9_",
+    "expires_in":3600,
+    "token_type":"Bearer"
+}
 ```
 
 ## 2.3 Revocació d'un token d'accés <a name="2.3"></a>
@@ -460,14 +457,14 @@ Per exemple, si l'algorisme que es vol emprar, i que actualment es recomana, és
 
 Un document, per tant, quedaria correctament identificat, per exemple, de la següent manera:
 
-```
+```json
 "documents": [
-    	{
-			"name":"fitxer1.pdf",
-			"algorithm":"http://www.w3.org/2001/04/xmlenc#sha256",
-			"hash":"mx3kGyP73e+5bGsYdLNmKQoy0Wf1aK5lgjh1tU3HWF8="
-       "metadata":"classificacio=00002;format=PDF"
-		},
+    {
+        "name":"fitxer1.pdf",
+        "algorithm":"http://www.w3.org/2001/04/xmlenc#sha256",
+        "hash":"mx3kGyP73e+5bGsYdLNmKQoy0Wf1aK5lgjh1tU3HWF8="
+        "metadata":"classificacio=00002;format=PDF"
+    },
 ...
 ]
 ```
