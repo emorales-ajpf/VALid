@@ -63,8 +63,11 @@ Un cop el client OAuth estigui configurat és molt possible que sigui necessari 
 
 Es disposa de dos entorns:
 
-- Pre-producció (entorn per realitzar integracions i proves): https://identitats-pre.aoc.cat/o/oauth2
-- Producció: https://identitats.aoc.cat/o/oauth2
+- Pre-producció (entorn per realitzar integracions i proves): https://valid-pre.aoc.cat/o/oauth2
+- Producció: https://valid.aoc.cat/o/oauth2
+
+[!IMPORTANT]  
+Els dominis d'identitats van canviar l'octubre de 2024, d'`identitats-pre.aoc.cat` a `valid-pre.aoc.cat`  i d'`identitats.aoc.cat` a `valid.aoc.cat`.
 
 # 2 Integració de l'aplicació client <a name="2"></a>
 
@@ -91,7 +94,7 @@ En aquest cas, la aplicació web envia una sol·licitud de token a VALId, rep un
 
 ## 2.1 Construcció de la URL <a name="2.1"></a>
 
-La URL que s'usa per realitzar la autenticació és: https://identitats-pre.aoc.cat/o/oauth2/auth
+La URL que s'usa per realitzar la autenticació és: https://valid-pre.aoc.cat/o/oauth2/auth
 
 Aquesta URL és accessible únicament per protocol segur _https_i tots els processos d'autenticació s'iniciaran accedint a aquesta, tot passant una sèrie de paràmetres dins de la _query string_ que enumerem a continuació:
 
@@ -108,7 +111,7 @@ Aquesta URL és accessible únicament per protocol segur _https_i tots els proce
 
 A continuació es mostra un exemple de URL d'inici de procés d'autenticació:
 ```
-https://identitats-pre.aoc.cat/o/oauth2/auth?scope=autenticacio_usuari&state=codi_estat_propi&redirect_uri=https://enotum.aoc.cat/code&response_type=code&client_id=0123456789.serveis.aoc.cat&approval_prompt=auto
+https://valid-pre.aoc.cat/o/oauth2/auth?scope=autenticacio_usuari&state=codi_estat_propi&redirect_uri=https://enotum.aoc.cat/code&response_type=code&client_id=0123456789.serveis.aoc.cat&approval_prompt=auto
 ```
 
 ## 2.2 Tractament de la resposta <a name="2.2"></a>
@@ -130,7 +133,7 @@ Un cop rebut el codi d'autorització, la aplicació client ha de negociar un _to
 
 La URL que s'usa per negociar el _token_ d'accés és:
 ```
-https://identitats-pre.aoc.cat/o/oauth2/token
+https://valid-pre.aoc.cat/o/oauth2/token
 ```
 
 La negociació del _token_ d'accés es realitza mitjançant una crida POST entre el servidor de la aplicació client i el VALId. Aquesta crida ha d'incloure els següents paràmetres:
@@ -189,7 +192,7 @@ Si en la petició d'autenticació inicial s'especifica el valor offline al parà
 
 A partir d'aquest moment, es podran demanar nous tokens a partir de la URL que s'usa per negociar el _token_ d'accés:
 ```
-https://identitats-pre.aoc.cat/o/oauth2/token
+https://valid-pre.aoc.cat/o/oauth2/token
 ```
 
 A diferència del cas anterior, caldrà especificar el valor refresh_token al paràmetre grant_type i en comptes d'enviar el paràmetre code, caldrà enviar el paràmetre refresh_token amb el valor de la resposta anterior. Per exemple:
@@ -220,7 +223,7 @@ La resposta a aquesta crida contindria el nou accés token generat:
 
 Per revocar un _token_ d'accés l'aplicació client pot realitzar una invocació a la següent URL del VALId:
 ```
-https://identitats-pre.aoc.cat/o/oauth2/revoke?token=<token_acces>
+https://valid-pre.aoc.cat/o/oauth2/revoke?token=<token_acces>
 ```
 Si la revocació es realitza correctament, l'aplicació rebrà un codi de resposta HTTP 200. En qualsevol altre cas, rebrà un codi HTTP 400 i un missatge d'error.
 
@@ -236,7 +239,7 @@ Per evitar aquesta situació s'ha implementat una funcionalitat que permet inval
 
 Així doncs, per tancar la sessió d'usuari a VALId, l'aplicació client pot realitzar una invocació a la següent URL:
 ```
-https://identitats-pre.aoc.cat/o/oauth2/logout?token=<token_acces>
+https://valid-pre.aoc.cat/o/oauth2/logout?token=<token_acces>
 ```
 La invocació retornarà un codi HTTP 200 si la operació s'ha realitzat correctament o un codi HTTP 400 si s'ha produït algun error, junt amb un missatge descriptiu.
 
@@ -254,7 +257,7 @@ El servei proporciona la següent informació:
 
 El servei d'obtenció de dades de l'usuari té un únic paràmetre, l'_access token_ obtingut per la aplicació client en el moment de fer la autenticació.
 
-| _Mètode (GET)_ | https://identitats-pre.aoc.cat/serveis-rest/getUserInfo |
+| _Mètode (GET)_ | https://valid-pre.aoc.cat/serveis-rest/getUserInfo |
 | --- | --- |
 | _Paràmetre_ | AccessToken |
 | _Resposta (exemple)_ | {<br>"status":"ok",<br>"identifier":"99999999R",<br>"prefix":"0034",<br>"phone":"609112233",<br>"documentType":"1"<br>} |
@@ -292,7 +295,7 @@ Quan l'usuari s'autentica al VALId es generen una sèrie d'evidències de cadasc
 
 El servei d'obtenció d'evidències té un únic paràmetre, l'_access token_ obtingut per la aplicació client en el moment de fer la autenticació.
 
-| _Mètode (GET)_ | https://identitats-pre.aoc.cat/serveis-rest/getAuthenticationEvidence |
+| _Mètode (GET)_ | https://valid-pre.aoc.cat/serveis-rest/getAuthenticationEvidence |
 | --- | --- |
 | _Paràmetre_ | AccessToken (GET) |
 | _Resposta (exemple)_ | {<br>&nbsp;&nbsp;&nbsp;&nbsp;"status": "ok",<br>&nbsp;&nbsp;&nbsp;&nbsp;"evidences":<br>&nbsp;&nbsp;&nbsp;&nbsp;[<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PD94bWwgdmVyc2l(...)RpY2lvPg==",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PD94bWwgdmVyc2lvb(...)vc3RhPg==",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PD94bWwgdmVy(...)jaW8+"<br>&nbsp;&nbsp;&nbsp;&nbsp;]<br>} |
@@ -316,7 +319,7 @@ L'autenticació de l'usuari es pot usar com a clau per generar el que s'anomena 
 
 Aquesta signatura consisteix en la generació d'una evidència signada en la que consten els noms i resums criptogràfics dels documents que es volen signar.
 
-| _Mètode (POST)_ | https://identitats-pre.aoc.cat/serveis-rest/getBasicSignature |
+| _Mètode (POST)_ | https://valid-pre.aoc.cat/serveis-rest/getBasicSignature |
 | --- | --- |
 | _Petició (exemple)_ | {<br> &nbsp;&nbsp;&nbsp;&nbsp;"accessToken":"ACCESS-TOKEN",<br> &nbsp;&nbsp;&nbsp;&nbsp;"documents": [<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"name":"fitxer1.pdf", <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"algorithm":"SHA1",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "hash":"UkVTVU0="<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"metadata":"classificacio=00002;format=PDF" <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"name":"fitxer2.doc",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "algorithm":"SHA1",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "hash":"UkVTVU0=" <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;],<br> "pdfEvidence":"true"<br>} |
 | _Resposta (exemple)_ | {<br>&nbsp;&nbsp;&nbsp;&nbsp;"status":"ok",<br>&nbsp;&nbsp;&nbsp;&nbsp;"evidence":"PD94bW0dXJhT (...) 6U2lnbmF0dXJlPg==",<br>&nbsp;&nbsp;&nbsp;&nbsp;"pdfEvidence":"PD94bW0dXJhT (...) 6U2lnbmF0dXJlPg=="<br>} |
@@ -348,7 +351,7 @@ Per fer-ho, l'aplicació web ha de realitzar una operació REST _initBasicSignat
 
 ![2](Captures/2.png)
 
-| _Mètode (POST)_ | https://identitats-pre.aoc.cat/serveis-rest/initBasicSignature |
+| _Mètode (POST)_ | https://valid-pre.aoc.cat/serveis-rest/initBasicSignature |
 | --- | --- |
 | _Petició (exemple)_ | {<br>&nbsp;&nbsp;&nbsp;&nbsp; "accessToken":"ACCESS-TOKEN",<br>&nbsp;&nbsp;&nbsp;&nbsp;"redirectUri":"URL-REDIRECT",<br>&nbsp;&nbsp;&nbsp;&nbsp; "documents": [<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"name":"fitxer1.pdf",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "algorithm":"SHA1", <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"hash":"UkVTVU0=""metadata":"classificacio=00002;format=PDF" <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"name":"fitxer2.doc", <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"algorithm":"SHA1",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "hash":"UkVTVU0=" <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;]<br>} |
 | _Resposta (exemple)_ | {<br>&nbsp;&nbsp;&nbsp;&nbsp;"status":"ok",<br>&nbsp;&nbsp;&nbsp;&nbsp;"signatureCode":"XXXXXXXXXXXXXXXXXXX"<br>} |
@@ -374,7 +377,7 @@ La resposta obtinguda, en format JSON, conté les següents dades:
 
 VALId verifica la validesa d'aquest _access token_ i retorna un _signatureCode_ (d'un sòl ús) que l'aplicació client haurà d'informar con a paràmetre en la següent URL del VALId:
 ```
-https://identitats-pre.aoc.cat/o/sign?signature_code=<signature code>
+https://valid-pre.aoc.cat/o/sign?signature_code=<signature code>
 ```
 En aquest punt, VALID presenta a l'usuari la pantalla que li permetrà realitzar la nova autenticació.
 
@@ -400,7 +403,7 @@ Si la signatura s'ha realitzat correctament, l'aplicació client pot sol·licita
 | ![image](https://user-images.githubusercontent.com/32306731/137281698-9dfc2044-94f7-487f-a7d6-9a4e0707feb3.png) És important que l'aplicació client controli el número d'accessos a la seva URL de redirecció on se li comunica el resultat de la signatura per evitar descàrregues de signatures ja obtingudes prèviament.
  
 
-| _Mètode (POST)_ | https://identitats-pre.aoc.cat/serveis-rest/getBasicSignature |
+| _Mètode (POST)_ | https://valid-pre.aoc.cat/serveis-rest/getBasicSignature |
 | --- | --- |
 | _Petició (exemple)_ | { <br>&nbsp;&nbsp;&nbsp;&nbsp;"accessToken":"ACCESS-TOKEN", <br>&nbsp;&nbsp;&nbsp;&nbsp;"signatureCode":"SIGNATURE-CODE"<br>} |
 | _Resposta (exemple)_ | {<br>&nbsp;&nbsp;&nbsp;&nbsp;"status":"ok",<br>&nbsp;&nbsp;&nbsp;&nbsp;"evidence":"PD94bW0dXJhT (...) 6U2lnbmF0dXJlPg=="<br>} |
